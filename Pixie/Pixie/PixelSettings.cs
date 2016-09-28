@@ -34,8 +34,8 @@ namespace Pixie
             {
                 using (var stream = File.OpenRead(fileName))
                 {
-                    var serializer = new DataContractJsonSerializer(typeof(PixelSettings));
-                    return serializer.ReadObject(stream) as PixelSettings;
+                    var serializer = new DataContractJsonSerializer(typeof(PixelSettings), new DataContractJsonSerializerSettings() {UseSimpleDictionaryFormat = true});
+                   return serializer.ReadObject(stream) as PixelSettings;
                 }
             }
             catch (IOException)

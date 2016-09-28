@@ -8,18 +8,25 @@ namespace Pixie
     internal class PixelMapper
     {
         private Bitmap _bitmap;
+        private int _bitsPerPixel;
 
         public Dictionary<Color, int> ColorMapping { get; set; }
 
-        public PixelMapper(Bitmap bitmap)
+        public PixelMapper(Bitmap bitmap, PixelSettings settings)
         {
             _bitmap = bitmap;
+            _bitsPerPixel = settings.BitsPerPixel;
             ColorMapping = new Dictionary<Color, int>();
+            foreach (var i in settings.ColorMapping)
+            {
+                ColorMapping.Add(ColorTranslator.FromHtml(i.Key), i.Value);
+            }
+
         }
 
-        public byte[] MapPixels(int bitsPerPixel)
+        public byte[] MapPixels()
         {
-            var bitsCount = _bitmap.Width * _bitmap.Height * bitsPerPixel;
+            var bitsCount = _bitmap.Width * _bitmap.Height * _bitsPerPixel;
             var bitArray = new BitArray(bitsCount);
             int arrayPosition = 0;
 
@@ -27,7 +34,7 @@ namespace Pixie
             {
                 for (var j = 0; j < _bitmap.Width; j++)
                 {
-                    ProcessPixel(_bitmap.GetPixel(j, i), bitsPerPixel, bitArray, ref arrayPosition);
+                    ProcessPixel(_bitmap.GetPixel(j, i), _bitsPerPixel, bitArray, ref arrayPosition);
                 }
             }
 
