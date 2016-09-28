@@ -53,7 +53,7 @@ namespace Pixie
 
         private byte[] ProcessSymbol(int symbolXStart, int symbolXEnd, int symbolYStart, int symbolYEnd)
         {
-            var bitsCount = _bitmap.Width * _bitmap.Height * _settings.BitsPerPixel;
+            var bitsCount = (symbolXEnd - symbolXStart) * (symbolYEnd - symbolYStart) * _settings.BitsPerPixel;
             var bitArray = new BitArray(bitsCount);
             int arrayPosition = 0;
 

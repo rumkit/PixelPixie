@@ -28,6 +28,7 @@ namespace Pixie
                     var settings = PixelSettings.FromFile(options.PixelSettingsPath);
                     var mapper = new PixelMapper(bitmap, settings);
                     var map = mapper.MapPixels();
+                    OutputFileFormatter.WriteOutput(map,options.OutputFileName);
                 }
                 catch (FileNotFoundException)
                 {
@@ -44,9 +45,5 @@ namespace Pixie
             return (int)ErrorCode.NoError;
 
         }
-
-
-
-
     }
 }
