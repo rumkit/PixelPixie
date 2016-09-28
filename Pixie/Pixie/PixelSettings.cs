@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
@@ -14,6 +15,21 @@ namespace Pixie
     {
         [DataMember]
         public int BitsPerPixel;
+
+        [DataMember]
+        public int SymbolHeight;
+
+        [DataMember]
+        public int SymbolWidth;
+
+        [DataMember]
+        public int DelimeterWidth;
+
+        [DataMember]
+        public int DelimeterHeight;
+        
+        [DataMember]
+        public string DelimeterColor;
 
         [DataMember]
         public Dictionary<string, int> ColorMapping;
@@ -38,10 +54,12 @@ namespace Pixie
                    return serializer.ReadObject(stream) as PixelSettings;
                 }
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                Console.WriteLine("Error reading from file");
-                return null;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error reading from config file");
+                Console.WriteLine(e.Message);
+                throw;
             }
             
         }

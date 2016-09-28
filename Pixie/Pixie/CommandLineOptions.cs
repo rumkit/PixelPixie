@@ -9,6 +9,9 @@ namespace Pixie
     /// </summary>
     class CommandLineOptions
     {
+        [Option('s', "split", DefaultValue = true, HelpText = "split characters to several arrays")]
+        public bool SplitCharacters { get; set; }
+
         [Option('c', "config", DefaultValue = "config.json", HelpText = "configuration file path")]
         public string PixelSettingsPath { get; set; }
 

@@ -9,15 +9,40 @@ using System.Threading.Tasks;
 
 namespace Pixie
 {
+    public enum ErrorCode
+    {
+        NoError = 0,
+        FileNotFound,
+        FileParsingError
+    }
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var options = new CommandLineOptions();
             if (CommandLine.Parser.Default.ParseArguments(args, options))
             {
-                Console.WriteLine("Hit");
+                try
+                {
+                    var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
+                    var settings = PixelSettings.FromFile(options.PixelSettingsPath);
+                    var mapper = new PixelMapper(bitmap, settings);
+                    var map = mapper.MapPixels();
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Critical error, exiting =(");
+                    return (int)ErrorCode.FileNotFound;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Critical error, exiting =(");
+                    return (int)ErrorCode.FileParsingError;
+                }
             }
+
+            return (int)ErrorCode.NoError;
+
         }
 
 
