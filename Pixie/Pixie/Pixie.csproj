@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
+    <Compile Include="CommandLineOptions.cs" />
     <Compile Include="PixelMapper.cs" />
     <Compile Include="PixelSettings.cs" />
     <Compile Include="Program.cs" />
