@@ -34,11 +34,11 @@ namespace Pixie
         {
             var symbols = new List<byte[]>();
 
-            for (int i = 0; i < _bitmap.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
+            for (int j = 0; j < _bitmap.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                for (int j = 0; j < _bitmap.Width; j += _settings.SymbolWidth + _settings.DelimeterWidth)
+                for (int i = 0; i < _bitmap.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
                 {
-                    symbols.Add(ProcessSymbol(j, j + _settings.SymbolWidth, i, i + _settings.SymbolHeight));
+                    symbols.Add(ProcessSymbol(i, i + _settings.SymbolWidth, j, j + _settings.SymbolHeight));
                 }
             }
 
@@ -59,18 +59,18 @@ namespace Pixie
             var bitArray = new BitArray(bitsCount);
             int arrayPosition = 0;
 
-            for (var i = symbolYStart; i < symbolYEnd; i++)
+            for (var j = symbolYStart; j < symbolYEnd; j++)
             {
-                for (var j = symbolXStart; j < symbolXEnd; j++)
+                for (var i = symbolXStart; i < symbolXEnd; i++)
                 {
                     try
                     {
-                        ProcessPixel(_bitmap.GetPixel(j, i), _settings.BitsPerPixel, bitArray, ref arrayPosition);
+                        ProcessPixel(_bitmap.GetPixel(i, j), _settings.BitsPerPixel, bitArray, ref arrayPosition);
                     }
                     catch (ArgumentException exception)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Problem detected at pixel {j},{i}");
+                        Console.WriteLine($"Problem detected at pixel {i},{j}");
                         Console.WriteLine(exception.Message);
                         throw;
                     }
