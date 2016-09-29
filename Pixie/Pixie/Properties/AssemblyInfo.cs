@@ -42,4 +42,5 @@ using CommandLine;
 [assembly: AssemblyInformationalVersion("1.0")]
 [assembly: AssemblyUsage(
     "Usage: pixie --input=input.bmp",
-    "       pixie -i input.bmp -o array.txt -c myconfig.json")]
+    "       pixie -i input.bmp -o array.txt -c myconfig.json",
+    "       pixie -g -o pattern.png -w 5 -h 10")]
