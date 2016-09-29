@@ -26,6 +26,10 @@ namespace Pixie
         }
 
 
+        /// <summary>
+        /// map all cells in grid to byte arrays
+        /// </summary>
+        /// <returns>list of mapped arrays</returns>
         public List<byte[]> MapPixels()
         {
             var symbols = new List<byte[]>();
@@ -41,6 +45,14 @@ namespace Pixie
             return symbols;
         }
 
+        /// <summary>
+        /// processes one symbol (one grid cell)
+        /// </summary>
+        /// <param name="symbolXStart">upper left corner of cell X coord</param>
+        /// <param name="symbolXEnd">bottom right corner of cell X coord</param>
+        /// <param name="symbolYStart">upper left corner of cell Y coord</param>
+        /// <param name="symbolYEnd">bottom right corner of cell Y coord</param>
+        /// <returns>byte representation of symbol</returns>
         private byte[] ProcessSymbol(int symbolXStart, int symbolXEnd, int symbolYStart, int symbolYEnd)
         {
             var bitsCount = (symbolXEnd - symbolXStart)*(symbolYEnd - symbolYStart)*_settings.BitsPerPixel;
@@ -68,6 +80,13 @@ namespace Pixie
             return bitArray.ToByteArray();
         }
 
+        /// <summary>
+        /// Processes one pixel of image and writes corresponding bits in output array
+        /// </summary>
+        /// <param name="color">color of pixel</param>
+        /// <param name="bitsPerPixel">bpp in output array</param>
+        /// <param name="outputArray">output array</param>
+        /// <param name="outputArrayPosition">current element in array</param>
         private void ProcessPixel(Color color, int bitsPerPixel, BitArray outputArray, ref int outputArrayPosition)
         {
             if (!ColorMapping.ContainsKey(color))

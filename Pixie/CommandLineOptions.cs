@@ -5,6 +5,7 @@ namespace Pixie
 {
     /// <summary>
     /// Options for CommandLine parser
+    /// each field represent a key in console args
     /// </summary>
     class CommandLineOptions
     {
@@ -29,6 +30,10 @@ namespace Pixie
         [Option('h', "height", HelpText = "grid pattern height in symbols", MutuallyExclusiveSet = "Generation")]
         public int PatternHeight { get; set; }
 
+        /// <summary>
+        /// Gets help message from assebly attributes
+        /// </summary>
+        /// <returns>string representation of help message</returns>
         [HelpOption]
         public string GetUsage()
         {

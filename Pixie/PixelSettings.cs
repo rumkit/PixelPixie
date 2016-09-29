@@ -12,6 +12,7 @@ namespace Pixie
     [DataContract]
     internal class PixelSettings
     {
+#pragma warning disable 0649
         [DataMember]
         public int BitsPerPixel;
 
@@ -29,6 +30,7 @@ namespace Pixie
         
         [DataMember]
         public string DelimeterColor;
+#pragma warning restore 0649
 
         [DataMember]
         public Dictionary<string, int> ColorMapping;

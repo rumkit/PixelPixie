@@ -22,6 +22,11 @@ namespace Pixie
             return (int) ErrorCode.ArgumentsMismatch;
         }
 
+        /// <summary>
+        /// parses image and write arrays to output file
+        /// </summary>
+        /// <param name="options">parsed command line args</param>
+        /// <returns>error code</returns>
         static int ParseFontImage(CommandLineOptions options)
         {
             try
@@ -44,6 +49,11 @@ namespace Pixie
             return (int) ErrorCode.NoError;
         }
 
+        /// <summary>
+        /// Grid pattern generation and writing to file
+        /// </summary>
+        /// <param name="options">parsed command line args</param>
+        /// <returns>error code</returns>
         static int GeneratePattern(CommandLineOptions options)
         {
             try

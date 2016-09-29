@@ -8,7 +8,7 @@ namespace Pixie
     internal static class Extensions
     {
         /// <summary>
-        /// Converts BitArray to byte[]
+        /// Converts <see cref="BitArray"/> to <see cref="byte[]"/>
         /// </summary>
         /// <param name="bits"></param>
         /// <returns></returns>

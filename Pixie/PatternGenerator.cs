@@ -2,17 +2,27 @@
 
 namespace Pixie
 {
+    /// <summary>
+    /// Generates empty grid pattern bitmap
+    /// </summary>
     internal class PatternGenerator
     {
         private PixelSettings _settings;
         private Color _delimeterColor;
         private static readonly Color BackGround = Color.Gray;
+
         public PatternGenerator(PixelSettings settings)
         {
             _settings = settings;
             _delimeterColor = ColorTranslator.FromHtml(_settings.DelimeterColor);
         }
-       
+
+        /// <summary>
+        /// Fills bitmap with solid color and draws a grid on it
+        /// </summary>
+        /// <param name="patternWidthCount">width of grid in symbols (cells)</param>
+        /// <param name="patternHeightCount">height of grid in symbols (cells)</param>
+        /// <returns>production ready bitmap</returns>
         public Bitmap GeneratePattern(int patternWidthCount, int patternHeightCount)
         {
             var pattentWidth = patternWidthCount*_settings.SymbolWidth +
@@ -28,6 +38,10 @@ namespace Pixie
             return pattern;
         }
 
+        /// <summary>
+        /// Fills background with a solid color
+        /// </summary>
+        /// <param name="pattern">bitmap to fill</param>
         private void FillBackground(Bitmap pattern)
         {
             for (int j = 0; j < pattern.Height; j++)
@@ -39,6 +53,10 @@ namespace Pixie
             }
         }
 
+        /// <summary>
+        /// Draws horizontal lines, wich will devide grid cells
+        /// </summary>
+        /// <param name="pattern">bitmap to draw in</param>
         private void DrawHorizontalLines(Bitmap pattern)
         {
             for (int i = 0; i < pattern.Width; i++)
@@ -56,6 +74,10 @@ namespace Pixie
             }
         }
 
+        /// <summary>
+        /// Draws vertical lines, wich will devide grid cells
+        /// </summary>
+        /// <param name="pattern">bitmap to draw in</param>
         private void DrawVerticalLines(Bitmap pattern)
         {
             for (int j = 0; j < pattern.Height; j++)

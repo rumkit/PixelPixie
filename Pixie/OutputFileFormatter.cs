@@ -7,8 +7,17 @@ namespace Pixie
 {
     static class OutputFileFormatter
     {
+        /// <summary>
+        /// How many elements of array will be displayed in one line
+        /// </summary>
         private const int ElementsPerLine = 10;
 
+        /// <summary>
+        /// Writes formatted output of symbols parser's result
+        /// </summary>
+        /// <param name="symbols">byte[] representation of symbols</param>
+        /// <param name="fileName">path to the file to create</param>
+        /// <param name="singleArray">shall output be written to single array or one array per symbol</param>
         public static void WriteOutput(List<byte[]> symbols, string fileName, bool singleArray = false)
         {
             try
@@ -16,6 +25,7 @@ namespace Pixie
                 using (var stream = File.Open(fileName, FileMode.Create))
                 using (var writer = new StreamWriter(stream))
                 {
+                    // Make header
                     writer.WriteLine("//");
                     writer.WriteLine("//");
                     writer.WriteLine("// Generated with PixelPixie (c) 2016");
@@ -24,6 +34,7 @@ namespace Pixie
                     writer.WriteLine();
                     writer.WriteLine();
 
+                    // Write array(s)
                     if (singleArray)
                     {
                         var totalLength = (from s in symbols
