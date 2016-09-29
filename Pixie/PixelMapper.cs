@@ -29,11 +29,11 @@ namespace Pixie
         }
 
 
-        public List<byte[]> MapPixels(bool splitCharacters = true)
+        public List<byte[]> MapPixels(bool toSingleArray = false)
         {
             var symbols = new List<byte[]>();
 
-            if (splitCharacters)
+            if (!toSingleArray)
             {
                 for (int i = 0; i < _bitmap.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
                 {
@@ -72,8 +72,6 @@ namespace Pixie
                         Console.WriteLine(exception.Message);
                         throw;
                     }
-                    
-                    
                 }
             }
 

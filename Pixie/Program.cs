@@ -35,7 +35,7 @@ namespace Pixie
                 var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
                 var settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 var mapper = new PixelMapper(bitmap, settings);
-                var map = mapper.MapPixels();
+                var map = mapper.MapPixels(options.SingleArray);
                 OutputFileFormatter.WriteOutput(map, options.OutputFileName);
             }
             catch (Exception e)

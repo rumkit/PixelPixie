@@ -1,0 +1,14 @@
+{
+  "BitsPerPixel": 2,
+  "SymbolWidth": 12,
+  "SymbolHeight": 18,
+  "DelimeterWidth": 1,
+  "DelimeterHeight": 1,
+  "DelimeterColor": "#FF0000",
+  "ColorMapping": {
+    "#FFFFFF": 0,
+    "#000000": 1,
+    "#969696": 2,
+    "#7F7F7F": 2
+  }
+}
