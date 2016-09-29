@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Management.Instrumentation;
 
 namespace Pixie
 {
     static class OutputFileFormatter
     {
-        private const int DigitsPerLine = 10;
+        private const int ElementsPerLine = 10;
 
-        public static void WriteOutput(List<byte[]> symbols, string fileName)
+        public static void WriteOutput(List<byte[]> symbols, string fileName, bool singleArray = false)
         {
             try
             {
@@ -24,26 +26,58 @@ namespace Pixie
                     writer.WriteLine();
                     writer.WriteLine();
 
-
-                    for (int i = 0; i < symbols.Count; i++)
+                    if (singleArray)
                     {
-                        writer.WriteLine($"//symbol {i+1}");
-                        writer.Write($"unsigned char c{i+1}[{symbols[i].Length}] = \n    ");
+                        var totalLength = (from s in symbols
+                            select s.Length).Sum();
+
+                        writer.Write($"unsigned char c[{totalLength}] = \n    ");
                         writer.Write("{");
-                        for (int j = 0; j < symbols[i].Length; j++)
+
+                        int elementCounter = 0;
+
+                        for (int i = 0; i < symbols.Count; i++)
                         {
-                            writer.Write($"0x{symbols[i][j]:X}");
-                            if(j + 1 < symbols[i].Length)
+                            
+                            for (int j = 0; j < symbols[i].Length; j++)
                             {
-                                writer.Write(", ");
-                                if(j % DigitsPerLine == DigitsPerLine - 1)
-                                    writer.Write("\n    ");
+                                writer.Write($"0x{symbols[i][j]:X}");
+                                elementCounter++;
+                                if (j + 1 < symbols[i].Length || i < symbols.Count - 1)
+                                {
+                                    writer.Write(", ");
+                                    if (elementCounter % ElementsPerLine == ElementsPerLine - 1)
+                                        writer.Write("\n    ");
+                                }
                             }
                         }
                         writer.Write("}");
                         writer.WriteLine("\n");
-                        
                     }
+                    else
+                    {
+                        for (int i = 0; i < symbols.Count; i++)
+                        {
+                            writer.WriteLine($"//symbol {i + 1}");
+                            writer.Write($"unsigned char c{i + 1}[{symbols[i].Length}] = \n    ");
+                            writer.Write("{");
+                            for (int j = 0; j < symbols[i].Length; j++)
+                            {
+                                writer.Write($"0x{symbols[i][j]:X}");
+                                if (j + 1 < symbols[i].Length)
+                                {
+                                    writer.Write(", ");
+                                    if (j % ElementsPerLine == ElementsPerLine - 1)
+                                        writer.Write("\n    ");
+                                }
+                            }
+                            writer.Write("}");
+                            writer.WriteLine("\n");
+
+                        }
+                    }
+
+                    
                 }
             }
             catch(IOException exception)

@@ -29,23 +29,16 @@ namespace Pixie
         }
 
 
-        public List<byte[]> MapPixels(bool toSingleArray = false)
+        public List<byte[]> MapPixels()
         {
             var symbols = new List<byte[]>();
 
-            if (!toSingleArray)
+            for (int i = 0; i < _bitmap.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                for (int i = 0; i < _bitmap.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
+                for (int j = 0; j < _bitmap.Width; j += _settings.SymbolWidth + _settings.DelimeterWidth)
                 {
-                    for (int j = 0; j < _bitmap.Width; j += _settings.SymbolWidth + _settings.DelimeterWidth)
-                    {
-                        symbols.Add(ProcessSymbol(j, j + _settings.SymbolWidth, i, i + _settings.SymbolHeight));
-                    }
+                    symbols.Add(ProcessSymbol(j, j + _settings.SymbolWidth, i, i + _settings.SymbolHeight));
                 }
-            }
-            else
-            {
-                symbols.Add(ProcessSymbol(0,_bitmap.Width,0,_bitmap.Height));
             }
 
             return symbols;
@@ -80,10 +73,8 @@ namespace Pixie
 
         private void ProcessPixel(Color color, int bitsPerPixel, BitArray outputArray, ref int outputArrayPosition)
         {
-            if (color == DelimeterColor)
-                return;
             if (!ColorMapping.ContainsKey(color))
-                    throw new ArgumentException("Can't find corresponding bits to pixel color");
+                throw new ArgumentException("Can't find corresponding bits to pixel color");
             // Bits corresponding to color
             var colorBits = ColorMapping[color];
             // Bits left to process in current pixel
