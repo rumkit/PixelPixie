@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management.Instrumentation;
 
 namespace Pixie
 {
@@ -38,7 +36,6 @@ namespace Pixie
 
                         for (int i = 0; i < symbols.Count; i++)
                         {
-                            
                             for (int j = 0; j < symbols[i].Length; j++)
                             {
                                 writer.Write($"0x{symbols[i][j]:X}");
@@ -46,7 +43,7 @@ namespace Pixie
                                 if (j + 1 < symbols[i].Length || i < symbols.Count - 1)
                                 {
                                     writer.Write(", ");
-                                    if (elementCounter % ElementsPerLine == ElementsPerLine - 1)
+                                    if (elementCounter%ElementsPerLine == ElementsPerLine - 1)
                                         writer.Write("\n    ");
                                 }
                             }
@@ -67,20 +64,17 @@ namespace Pixie
                                 if (j + 1 < symbols[i].Length)
                                 {
                                     writer.Write(", ");
-                                    if (j % ElementsPerLine == ElementsPerLine - 1)
+                                    if (j%ElementsPerLine == ElementsPerLine - 1)
                                         writer.Write("\n    ");
                                 }
                             }
                             writer.Write("}");
                             writer.WriteLine("\n");
-
                         }
                     }
-
-                    
                 }
             }
-            catch(IOException exception)
+            catch (IOException exception)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Failed writing output");

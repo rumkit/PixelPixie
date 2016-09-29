@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 
 namespace Pixie
 {
@@ -25,7 +23,6 @@ namespace Pixie
             {
                 ColorMapping.Add(ColorTranslator.FromHtml(i.Key), i.Value);
             }
-
         }
 
 
@@ -46,7 +43,7 @@ namespace Pixie
 
         private byte[] ProcessSymbol(int symbolXStart, int symbolXEnd, int symbolYStart, int symbolYEnd)
         {
-            var bitsCount = (symbolXEnd - symbolXStart) * (symbolYEnd - symbolYStart) * _settings.BitsPerPixel;
+            var bitsCount = (symbolXEnd - symbolXStart)*(symbolYEnd - symbolYStart)*_settings.BitsPerPixel;
             var bitArray = new BitArray(bitsCount);
             int arrayPosition = 0;
 
@@ -87,7 +84,6 @@ namespace Pixie
                 outputArrayPosition++;
                 bitsToProcess--;
             }
-
         }
     }
 }

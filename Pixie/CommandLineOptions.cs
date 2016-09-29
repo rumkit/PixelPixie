@@ -1,5 +1,4 @@
-﻿using System.Text;
-using CommandLine;
+﻿using CommandLine;
 using CommandLine.Text;
 
 namespace Pixie
