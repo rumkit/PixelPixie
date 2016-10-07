@@ -32,7 +32,7 @@ namespace Pixie
         public List<byte[]> MapPixels()
         {
             if(_settings.SymbolWidth * _settings.SymbolHeight * _settings.BitsPerPixel % 8 != 0)
-                ConsoleLogger.WriteMessage("Number of bits per pixel is not a multiple of 8. Output values will be padded", MessageType.Warning);
+                ConsoleLogger.WriteMessage("Number of bits per symbol is not a multiple of 8. Output values will be padded", MessageType.Warning);
 
             var symbols = new List<byte[]>();
 
