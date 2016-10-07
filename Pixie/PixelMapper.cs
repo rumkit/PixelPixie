@@ -7,21 +7,19 @@ namespace Pixie
 {
     internal class PixelMapper
     {
-        private Bitmap _bitmap;
-        private PixelSettings _settings;
-
-        private Color DelimeterColor { get; }
-        private Dictionary<Color, int> ColorMapping { get; }
-
+        private readonly Bitmap _bitmap;
+        private readonly PixelSettings _settings;
+        private Dictionary<Color, int> ColorMappings { get; }
+        
         public PixelMapper(Bitmap bitmap, PixelSettings settings)
         {
             _bitmap = bitmap;
             _settings = settings;
-            DelimeterColor = ColorTranslator.FromHtml(settings.DelimeterColor);
-            ColorMapping = new Dictionary<Color, int>();
+            
+            ColorMappings = new Dictionary<Color, int>();
             foreach (var i in settings.ColorMapping)
             {
-                ColorMapping.Add(ColorTranslator.FromHtml(i.Key), i.Value);
+                ColorMappings.Add(ColorTranslator.FromHtml(i.Key), i.Value);
             }
         }
 
@@ -89,16 +87,16 @@ namespace Pixie
         /// <param name="outputArrayPosition">current element in array</param>
         private void ProcessPixel(Color color, int bitsPerPixel, BitArray outputArray, ref int outputArrayPosition)
         {
-            if (!ColorMapping.ContainsKey(color))
+            if (!ColorMappings.ContainsKey(color))
                 throw new ArgumentException("Can't find corresponding bits to pixel color");
             // Bits corresponding to color
-            var colorBits = ColorMapping[color];
+            var colorBits = ColorMappings[color];
             // Bits left to process in current pixel
             var bitsToProcess = bitsPerPixel;
             while (bitsToProcess > 0)
             {
                 // Check next bit and set flag in bit array if necessary
-                if ((colorBits & (1 << (bitsToProcess - 1))) > 0)
+                if ((colorBits & (1 << (bitsToProcess - 1))) != 0)
                     outputArray[outputArrayPosition] = true;
                 outputArrayPosition++;
                 bitsToProcess--;
