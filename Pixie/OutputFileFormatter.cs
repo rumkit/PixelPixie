@@ -49,7 +49,7 @@ namespace Pixie
                         {
                             for (int j = 0; j < symbols[i].Length; j++)
                             {
-                                writer.Write($"0x{symbols[i][j]:X}");
+                                writer.Write($"0x{symbols[i][j]:X2}");
                                 elementCounter++;
                                 if (j + 1 < symbols[i].Length || i < symbols.Count - 1)
                                 {
@@ -59,7 +59,7 @@ namespace Pixie
                                 }
                             }
                         }
-                        writer.Write("}");
+                        writer.Write("};");
                         writer.WriteLine("\n");
                     }
                     else
@@ -71,7 +71,7 @@ namespace Pixie
                             writer.Write("{");
                             for (int j = 0; j < symbols[i].Length; j++)
                             {
-                                writer.Write($"0x{symbols[i][j]:X}");
+                                writer.Write($"0x{symbols[i][j]:X2}");
                                 if (j + 1 < symbols[i].Length)
                                 {
                                     writer.Write(", ");
@@ -79,7 +79,7 @@ namespace Pixie
                                         writer.Write("\n    ");
                                 }
                             }
-                            writer.Write("}");
+                            writer.Write("};");
                             writer.WriteLine("\n");
                         }
                     }

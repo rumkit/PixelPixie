@@ -30,6 +30,9 @@ namespace Pixie
         /// <returns>list of mapped arrays</returns>
         public List<byte[]> MapPixels()
         {
+            if(_settings.SymbolWidth * _settings.SymbolHeight * _settings.BitsPerPixel % 8 != 0)
+                Console.WriteLine("Warning! Number of bits per pixel is not a multiple of 8. Output values will be padded.");
+
             var symbols = new List<byte[]>();
 
             for (int j = 0; j < _bitmap.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
@@ -88,7 +91,7 @@ namespace Pixie
         private void ProcessPixel(Color color, int bitsPerPixel, BitArray outputArray, ref int outputArrayPosition)
         {
             if (!ColorMappings.ContainsKey(color))
-                throw new ArgumentException("Can't find corresponding bits to pixel color");
+                throw new ArgumentException($"Can't find corresponding bits to pixel color #{color.R.ToString("X")}{color.G.ToString("X2")}{color.B.ToString("X2")}");
             // Bits corresponding to color
             var colorBits = ColorMappings[color];
             // Bits left to process in current pixel
