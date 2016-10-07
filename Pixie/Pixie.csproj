@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ErrorCode.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="CommandLineOptions.cs" />

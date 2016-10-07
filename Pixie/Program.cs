@@ -12,7 +12,7 @@ namespace Pixie
         static int Main(string[] args)
         {
             var options = new CommandLineOptions();
-
+           
             if (CommandLine.Parser.Default.ParseArguments(args, options))
             {
                 if (options.IsPatternRequested)
@@ -42,7 +42,7 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                Console.WriteLine("Critical error, exiting =(");
+                ConsoleLogger.WriteMessage(e.Message + "\n" +  e.InnerException?.Message + "\nExiting =(", MessageType.Error);
                 if (e is FileNotFoundException)
                     return (int)ErrorCode.FileNotFound;
                 if (e is ArgumentException)

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.Serialization;
 
 namespace Pixie
 {
@@ -31,7 +32,7 @@ namespace Pixie
         public List<byte[]> MapPixels()
         {
             if(_settings.SymbolWidth * _settings.SymbolHeight * _settings.BitsPerPixel % 8 != 0)
-                Console.WriteLine("Warning! Number of bits per pixel is not a multiple of 8. Output values will be padded.");
+                ConsoleLogger.WriteMessage("Number of bits per pixel is not a multiple of 8. Output values will be padded", MessageType.Warning);
 
             var symbols = new List<byte[]>();
 
@@ -68,12 +69,9 @@ namespace Pixie
                     {
                         ProcessPixel(_bitmap.GetPixel(i, j), _settings.BitsPerPixel, bitArray, ref arrayPosition);
                     }
-                    catch (ArgumentException exception)
+                    catch (PixelProcessingException e)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Problem detected at pixel {i},{j}");
-                        Console.WriteLine(exception.Message);
-                        throw;
+                        throw new PixelProcessingException( $"Problem detected while processing pixel at {i},{j}", e);
                     }
                 }
             }
@@ -91,7 +89,8 @@ namespace Pixie
         private void ProcessPixel(Color color, int bitsPerPixel, BitArray outputArray, ref int outputArrayPosition)
         {
             if (!ColorMappings.ContainsKey(color))
-                throw new ArgumentException($"Can't find corresponding bits to pixel color #{color.R.ToString("X")}{color.G.ToString("X2")}{color.B.ToString("X2")}");
+                throw new PixelProcessingException($"Can't find corresponding bits to pixel color " +
+                                                   $"#{color.R.ToString("X2")}{color.G.ToString("X2")}{color.B.ToString("X2")}. Check your config");
             // Bits corresponding to color
             var colorBits = ColorMappings[color];
             // Bits left to process in current pixel
@@ -106,4 +105,30 @@ namespace Pixie
             }
         }
     }
+
+    [Serializable]
+    internal class PixelProcessingException : Exception
+    {
+        public PixelProcessingException()
+        {
+        }
+
+        public PixelProcessingException(string message) : base(message)
+        {
+           
+        }
+
+        public PixelProcessingException(string message, Exception inner) : base(message, inner)
+        {
+           
+        }
+
+        protected PixelProcessingException(
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
+    }
+     
+    
 }
