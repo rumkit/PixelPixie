@@ -2,7 +2,15 @@
 
 <img src="http://imgur.com/download/yZ9QrRM" width="128">
 
-PixelPixie is a .NET 4.6 console application. It generates a c-style char array from a bitmap grid with graphical fonts.
+#### Motivation
+
+Let's imagine you are an embedded programmer and you want to play with some kind of LCD screen. You want to print some text and that is suddenly hard, because you can only draw pixels. You can't use .ttf fonts because you have no OS in your device (and even if you have, it might have no concept of 'files' alltogether).
+
+So you have googled something like "bitmap fonts for embedded lcd screen arduino" and whooaa that's really a lot of them! And of course none of them is acceptable. It's always like that. Maybe you need 5x7 font but all you see is either 5x8 or 6x7. Maybe you are looking for non-latin font. 
+Or maybe you are dealing with something like MAX7456 for making OSD overlay and suddenly you need _two_ bits for each pixel, not one. Or maybe you need three bits for each pixel. Or four.
+
+And here is a solution for you problem! PixelPixie is a bitmap font generator that doesn't use hardcoded bits per pixel value or hardcoded symbol size. With PixelPixie you can finally forget that exhausting hours of drawing bitmap font on a piece of paper and then transforming it in hex by hand. Instead you can use generated png with grid and use your preferred graphical editor. And that should be better, right?
+
 
 #### Usage
 
