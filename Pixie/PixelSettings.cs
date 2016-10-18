@@ -51,15 +51,16 @@ namespace Pixie
             {
                 using (var stream = File.OpenRead(fileName))
                 {
-                    var serializer = new DataContractJsonSerializer(typeof(PixelSettings), new DataContractJsonSerializerSettings() {UseSimpleDictionaryFormat = true});
+
+                   var serializer = new DataContractJsonSerializer(typeof(PixelSettings), new DataContractJsonSerializerSettings() {UseSimpleDictionaryFormat = true});
+                   ConsoleLogger.WriteMessage($"Loaded configuration from {stream.Name}", MessageType.Info);
                    return serializer.ReadObject(stream) as PixelSettings;
                 }
             }
             catch (IOException e)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error reading from config file");
-                Console.WriteLine(e.Message);
+                ConsoleLogger.WriteMessage("Error reading from config file", MessageType.Error);
+                ConsoleLogger.WriteMessage(e.Message, MessageType.Error);
                 throw;
             }
             

@@ -68,7 +68,7 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                Console.WriteLine("Critical error, exiting =(");
+                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message + "\nExiting =(", MessageType.Error);
                 if (e is FileNotFoundException)
                     return (int)ErrorCode.FileNotFound;
                 return (int)ErrorCode.UknownError;

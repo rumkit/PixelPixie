@@ -85,11 +85,9 @@ namespace Pixie
                     }
                 }
             }
-            catch (IOException exception)
+            catch (IOException)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Failed writing output");
-                Console.WriteLine(exception.Message);
+                ConsoleLogger.WriteMessage("Failed writing output", MessageType.Error);
                 throw;
             }
         }
