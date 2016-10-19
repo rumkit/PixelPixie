@@ -58,7 +58,7 @@ namespace Pixie
             var g = Graphics.FromImage(pattern);
             for (var i = _settings.SymbolHeight; i < pattern.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterHeight), 0.0f, i, pattern.Width, i);
+                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterHeight), 0, i, pattern.Width, i);
             }
 
         }
