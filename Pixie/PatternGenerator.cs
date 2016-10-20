@@ -9,12 +9,13 @@ namespace Pixie
     {
         private PixelSettings _settings;
         private Color _delimeterColor;
-        private static readonly Color BackGround = Color.Gray;
+        private Color _backGroundColor;
 
         public PatternGenerator(PixelSettings settings)
         {
             _settings = settings;
             _delimeterColor = ColorTranslator.FromHtml(_settings.DelimeterColor);
+            _backGroundColor = ColorTranslator.FromHtml(_settings.BackgroundColor);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace Pixie
             {
                 for (int i = 0; i < pattern.Width; i++)
                 {
-                   pattern.SetPixel(i,j, BackGround);
+                   pattern.SetPixel(i,j, _backGroundColor);
                 }
             }
         }

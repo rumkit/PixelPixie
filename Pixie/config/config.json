@@ -5,10 +5,11 @@
   "DelimeterWidth": 1,
   "DelimeterHeight": 1,
   "DelimeterColor": "#FF0000",
+  "BackgroundColor": "#808080",
   "ColorMapping": {
     "#FFFFFF": 0,
     "#000000": 1,
-    "#969696": 2,
-    "#808080": 2
+    "#C8C8C8": 2,
+    "#808080": 3
   }
 }

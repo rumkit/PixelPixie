@@ -30,6 +30,9 @@ namespace Pixie
         
         [DataMember]
         public string DelimeterColor;
+
+        [DataMember]
+        public string BackgroundColor;
 #pragma warning restore 0649
 
         [DataMember]
