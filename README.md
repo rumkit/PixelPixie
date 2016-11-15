@@ -52,7 +52,7 @@ pixie parse
 
 All configuration is done via JSON config file. Please note that comments are not allowed normally in JSON and listed here only as reference.
 
-```json
+```YAML
 {
   "BitsPerPixel": 2,				// How many bits per pixel are used in a result array
   "SymbolWidth": 12,				// One symbol dimensions in pixels
