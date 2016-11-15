@@ -1,6 +1,6 @@
-# PixelPixie   [![Build Status](https://travis-ci.com/rumkit/PixelPixie.svg?token=gb3qD7dHcbK4DVMALU87&branch=master)](https://travis-ci.com/rumkit/PixelPixie)
+# PixelPixie [![Build Status](https://travis-ci.org/rumkit/PixelPixie.svg?branch=master)](https://travis-ci.org/rumkit/PixelPixie)
 
-<img src="http://imgur.com/download/yZ9QrRM" width="128">
+<img src="https://raw.githubusercontent.com/rumkit/PixelPixie/master/pixie.png" width="128">
 
 #### Motivation
 
@@ -50,7 +50,7 @@ pixie parse
 
 #### Configuration
 
-All configuration is done via JSON config file. Please note that comments are not allowed normally in JSON and listed here only as reference.
+All configuration is done via JSON config file. Please note that comments are not allowed normally in JSON and are listed here only as reference.
 
 ```YAML
 {
