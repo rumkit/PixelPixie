@@ -15,46 +15,54 @@ And here is a solution for you problem! PixelPixie is a bitmap font generator th
 #### Usage
 
 ```
-Pixie 1.0
+Pixie 1.2
 Copyright c  2016
-Usage: pixie --input=input.bmp
-       pixie -i input.bmp -o array.txt -c myconfig.json
-       pixie -g -o pattern.png -w 5 -h 10
+Usage: pixie parse someimage.bmp
+       pixie parse input.bmp --output=array.txt -c myconfig.json
+       pixie generate -w 5 -h 10
+
+  generate    generates a graphical pattern
+
+  parse       parses  a pattern filled with graphical font to a byte array
+```
+
+```
+pixie generate
+
+  -w, --width     grid pattern width in symbols
+
+  -h, --height    grid pattern height in symbols
+
+  -o, --output    (Default: output.png) output file name
+
+  -c, --config    (Default: config.json) configuration file path
+```
+
+```
+pixie parse
 
   -s, --single-array    place all characters to single array
 
+  -o, --output          (Default: output.txt) output file name
+
   -c, --config          (Default: config.json) configuration file path
-
-  -o, --output          Required. output file name
-
-  -i, --input           output file name
-
-  -g, --generate        generate grid pattern
-
-  -w, --width           grid pattern width in symbols
-
-  -h, --height          grid pattern height in symbols
-
-  --help                Display this help screen.
 ```
-
-
 
 #### Configuration
 
-All configuration is done via JSON config file:
+All configuration is done via JSON config file. Please note that comments are not allowed normally in JSON and listed here only as reference.
 
 ```json
 {
-  "BitsPerPixel": 2,
-  "SymbolWidth": 12,
-  "SymbolHeight": 18,
-  "DelimeterWidth": 1,
-  "DelimeterHeight": 1,
-  "DelimeterColor": "#FF0000",
-  "ColorMapping": {
-    "#FFFFFF": 0,
-    "#000000": 1,
+  "BitsPerPixel": 2,				// How many bits per pixel are used in a result array
+  "SymbolWidth": 12,				// One symbol dimensions in pixels
+  "SymbolHeight": 18,				//
+  "DelimeterWidth": 1,				// Symbol delimeter width and height
+  "DelimeterHeight": 1,				//
+  "DelimeterColor": "#FF0000",		// Color of delimeter in generated pattern
+  "ColorMapping": {					// A dictionary that is used to map a color in bitmap to
+    "#FFFFFF": 0,					// a bit sequence. Bit sequence is stored in DEC. And
+    "#000000": 1,					// only first N bits (BitsPerPixel) are taken in account
     "#969696": 2
   }
 }
