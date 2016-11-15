@@ -12,7 +12,7 @@ namespace Pixie
     class Program
     {
         private static string _invokedVerb;
-        private static object _suboptions;
+        private static CommonOptions _suboptions;
 
         static int Main(string[] args)
         {
@@ -22,22 +22,26 @@ namespace Pixie
                 (verb, suboptions) =>
                 {
                     _invokedVerb = verb;
-                    _suboptions = suboptions;
+                    _suboptions = (CommonOptions)suboptions;
                 }))
             {
                 Environment.Exit((int)ErrorCode.ArgumentsMismatch);
             }
 
+
+            int errorCode = (int) ErrorCode.NoError;
             if (_invokedVerb == "generate")
             {
-                GeneratePattern((GenerateOptions) _suboptions);
+                errorCode = GeneratePattern((GenerateOptions) _suboptions);
             }
             if (_invokedVerb == "parse")
             {
-                ParseFontImage((ParseOptions) _suboptions);
+                errorCode = ParseFontImage((ParseOptions) _suboptions);
             }
 
-            return (int) ErrorCode.NoError;
+            if(errorCode == (int)ErrorCode.NoError)
+                ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_suboptions.OutputFileName}\"", MessageType.Info);
+            return errorCode;
         }
 
         /// <summary>
@@ -57,11 +61,19 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                ConsoleLogger.WriteMessage(e.Message + "\n" +  e.InnerException?.Message + "\nExiting =(", MessageType.Error);
                 if (e is FileNotFoundException)
+                {
+                    ConsoleLogger.WriteMessage($"File not found or invalid file name \"{e.Message}\"", MessageType.Error);
                     return (int)ErrorCode.FileNotFound;
+                }
+
+                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message, MessageType.Error);
+
                 if (e is ArgumentException)
-                    return (int)ErrorCode.FileParsingError;
+                {
+                   return (int)ErrorCode.FileParsingError;
+                }
+               
                 return (int)ErrorCode.UknownError;
             }
             return (int) ErrorCode.NoError;
@@ -83,7 +95,7 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message + "\nExiting =(", MessageType.Error);
+                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message, MessageType.Error);
                 if (e is FileNotFoundException)
                     return (int)ErrorCode.FileNotFound;
                 return (int)ErrorCode.UknownError;

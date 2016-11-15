@@ -37,7 +37,7 @@ namespace Pixie
                     caption = WarningCaption;
                     break;
                 case MessageType.Info:
-                    caption = InfoCaption;
+                    caption = String.Empty;
                     break;
                 case MessageType.Error:
                     Console.BackgroundColor = ErrorBackColor;
@@ -49,10 +49,15 @@ namespace Pixie
             }
 
             Console.Write(caption);
-            Console.WriteLine(message);
+            
 
             Console.BackgroundColor = previousBackColor;
             Console.ForegroundColor = previousForeColor;
+
+            if(caption != String.Empty)
+                Console.WriteLine();
+            Console.WriteLine(message);
+            Console.WriteLine();
         }
     }
 

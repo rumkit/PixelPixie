@@ -32,6 +32,8 @@ namespace Pixie
                                 (patternHeightCount - 1) * _settings.DelimeterHeight;
             var pattern = new Bitmap(pattentWidth, patternHeight);
 
+            ConsoleLogger.WriteMessage($"Generating pattern\nBitmap size {pattentWidth} x {patternHeight} px", MessageType.Info);
+
             FillBackground(pattern);
             DrawVerticalLines(pattern);
             DrawHorizontalLines(pattern);
