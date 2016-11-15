@@ -49,11 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineOptions\CommonOptions.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ErrorCode.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="CommandLineOptions.cs" />
+    <Compile Include="CommandLineOptions\CommandLineOptions.cs" />
+    <Compile Include="CommandLineOptions\GenerateOptions.cs" />
     <Compile Include="OutputFileFormatter.cs" />
+    <Compile Include="CommandLineOptions\ParseOptions.cs" />
     <Compile Include="PatternGenerator.cs" />
     <Compile Include="PixelMapper.cs" />
     <Compile Include="PixelSettings.cs" />
@@ -62,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="config\config.json">
+    <None Include="config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

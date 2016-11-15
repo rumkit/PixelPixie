@@ -40,6 +40,6 @@ using CommandLine;
 [assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: AssemblyInformationalVersion("1.1")]
 [assembly: AssemblyUsage(
-    "Usage: pixie --input=input.bmp",
-    "       pixie -i input.bmp -o array.txt -c myconfig.json",
-    "       pixie -g -o pattern.png -w 5 -h 10")]
+    "Usage: pixie parse -i someimage.bmp",
+    "       pixie parse --input=input.bmp --output=array.txt -c myconfig.json",
+    "       pixie generate -w 5 -h 10")]

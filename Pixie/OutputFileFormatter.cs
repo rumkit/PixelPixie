@@ -10,7 +10,7 @@ namespace Pixie
         /// <summary>
         /// How many elements of array will be displayed in one line
         /// </summary>
-        private const int ElementsPerLine = 10;
+        public static int ElementsPerLine = 10;
 
         /// <summary>
         /// Writes formatted output of symbols parser's result

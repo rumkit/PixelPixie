@@ -3,26 +3,41 @@ using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using CommandLine;
 
 namespace Pixie
 {
 
     class Program
     {
+        private static string _invokedVerb;
+        private static object _suboptions;
+
         static int Main(string[] args)
         {
             var options = new CommandLineOptions();
-           
-            if (CommandLine.Parser.Default.ParseArguments(args, options))
-            {
-                if (options.IsPatternRequested)
+            
+            if (!Parser.Default.ParseArguments(args, options,
+                (verb, suboptions) =>
                 {
-                    return GeneratePattern(options);
-                }
-                return ParseFontImage(options);
+                    _invokedVerb = verb;
+                    _suboptions = suboptions;
+                }))
+            {
+                Environment.Exit((int)ErrorCode.ArgumentsMismatch);
             }
 
-            return (int) ErrorCode.ArgumentsMismatch;
+            if (_invokedVerb == "generate")
+            {
+                GeneratePattern((GenerateOptions) _suboptions);
+            }
+            if (_invokedVerb == "parse")
+            {
+                ParseFontImage((ParseOptions) _suboptions);
+            }
+
+            return (int) ErrorCode.NoError;
         }
 
         /// <summary>
@@ -30,7 +45,7 @@ namespace Pixie
         /// </summary>
         /// <param name="options">parsed command line args</param>
         /// <returns>error code</returns>
-        static int ParseFontImage(CommandLineOptions options)
+        static int ParseFontImage(ParseOptions options)
         {
             try
             {
@@ -57,7 +72,7 @@ namespace Pixie
         /// </summary>
         /// <param name="options">parsed command line args</param>
         /// <returns>error code</returns>
-        static int GeneratePattern(CommandLineOptions options)
+        static int GeneratePattern(GenerateOptions options)
         {
             try
             {
