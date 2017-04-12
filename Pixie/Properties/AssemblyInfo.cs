@@ -42,4 +42,5 @@ using CommandLine;
 [assembly: AssemblyUsage(
     "Usage: pixie parse someimage.bmp",
     "       pixie parse input.bmp --output=array.txt -c myconfig.json",
-    "       pixie generate -w 5 -h 10")]
+    "       pixie generate -w 5 -h 10",
+    "You can get additional help by using 'pixie parse --help' for example")]
