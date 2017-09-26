@@ -119,7 +119,7 @@ namespace Pixie
             }
 
             // Enumerate columns
-            for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = 0;
+            for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = columnWidth;
                 i < pattern.Width;   
                 i += columnWidth)
             {
