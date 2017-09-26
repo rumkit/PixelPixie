@@ -40,8 +40,8 @@ namespace Pixie
                         var totalLength = (from s in symbols
                             select s.Length).Sum();
 
-                        writer.Write($"unsigned char c[{totalLength}] = \n    ");
-                        writer.Write("{");
+                        writer.Write($"unsigned char c[{totalLength}] = \n");
+                        writer.Write("{\n    ");
 
                         int elementCounter = 0;
 
@@ -59,7 +59,7 @@ namespace Pixie
                                 }
                             }
                         }
-                        writer.Write("};");
+                        writer.Write("\n};");
                         writer.WriteLine("\n");
                     }
                     else
@@ -67,8 +67,8 @@ namespace Pixie
                         for (int i = 0; i < symbols.Count; i++)
                         {
                             writer.WriteLine($"//symbol {i + 1}");
-                            writer.Write($"unsigned char c{i + 1}[{symbols[i].Length}] = \n    ");
-                            writer.Write("{");
+                            writer.Write($"unsigned char c{i + 1}[{symbols[i].Length}] = \n");
+                            writer.Write("{\n    ");
                             for (int j = 0; j < symbols[i].Length; j++)
                             {
                                 writer.Write($"0x{symbols[i][j]:X2}");
@@ -79,7 +79,7 @@ namespace Pixie
                                         writer.Write("\n    ");
                                 }
                             }
-                            writer.Write("};");
+                            writer.Write("\n};");
                             writer.WriteLine("\n");
                         }
                     }
