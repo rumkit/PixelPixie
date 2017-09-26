@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Text;
 
 namespace Pixie
 {
@@ -109,7 +110,10 @@ namespace Pixie
 
             // select string format specifier based on enumeration style
             var numbersStyle = enumerationStyle == EnumerationStyle.Hex ? "X" : "D2";
-            
+
+            // make numbers more readable on low resolutions
+            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+
             // Enumerate rows
             for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
                 i < pattern.Height; 
@@ -120,7 +124,7 @@ namespace Pixie
 
             // Enumerate columns
             for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = columnWidth;
-                i < pattern.Width;   
+                i < pattern.Width;
                 i += columnWidth)
             {
                 graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, topPadding);
