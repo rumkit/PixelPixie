@@ -12,5 +12,8 @@ namespace Pixie
 
         [Option('o', "output", HelpText = "output file name", DefaultValue = "output.png")]
         public override string OutputFileName { get; set; }
+
+        [Option('n', "enumerate", HelpText = "draw grid rows and columns numbers", DefaultValue = Pixie.EnumerationStyle.None)]
+        public EnumerationStyle EnumerationStyle { get; set; }
     }
 }

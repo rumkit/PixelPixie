@@ -12,5 +12,8 @@ namespace Pixie
 
         [Option('o', "output", HelpText = "output file name", DefaultValue = "output.txt")]
         public override string OutputFileName { get; set; }
+
+        [Option('h', "skip-headers", HelpText = "skip headers with rows and columns numbers (first row and first column are not processed)", DefaultValue = false)]
+        public bool SkipHeaders { get; set; }
     }
 }

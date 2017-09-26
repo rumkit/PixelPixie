@@ -56,7 +56,7 @@ namespace Pixie
                 var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
                 var settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 var mapper = new PixelMapper(bitmap, settings);
-                var map = mapper.MapPixels();
+                var map = mapper.MapPixels(options.SkipHeaders);
                 OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray);
             }
             catch (Exception e)
@@ -90,7 +90,7 @@ namespace Pixie
             {
                 var settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 var generator = new PatternGenerator(settings);
-                var pattern = generator.GeneratePattern(options.PatternWidth, options.PatternHeight);
+                var pattern = generator.GeneratePattern(options.PatternWidth, options.PatternHeight, options.EnumerationStyle);
                 pattern.Save(options.OutputFileName);
             }
             catch (Exception e)

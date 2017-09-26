@@ -24,12 +24,13 @@ namespace Pixie
             }
         }
 
-
+        
         /// <summary>
         /// map all cells in grid to byte arrays
         /// </summary>
+        /// <param name="skipHeaders">will skip first row and first column</param>
         /// <returns>list of mapped arrays</returns>
-        public List<byte[]> MapPixels()
+        public List<byte[]> MapPixels(bool skipHeaders)
         {
             ConsoleLogger.WriteMessage($"Parsing bitmap to byte array", MessageType.Info);
             if (_settings.SymbolWidth * _settings.SymbolHeight * _settings.BitsPerPixel % 8 != 0)
@@ -37,9 +38,12 @@ namespace Pixie
 
             var symbols = new List<byte[]>();
 
-            for (int j = 0; j < _bitmap.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
+            var firstRow = skipHeaders ? _settings.SymbolHeight + _settings.DelimeterHeight : 0;
+            var firstColumn = skipHeaders ? _settings.SymbolWidth + _settings.DelimeterWidth : 0;
+
+            for (int j = firstRow; j < _bitmap.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                for (int i = 0; i < _bitmap.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
+                for (int i = firstColumn; i < _bitmap.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
                 {
                     symbols.Add(ProcessSymbol(i, i + _settings.SymbolWidth, j, j + _settings.SymbolHeight));
                 }

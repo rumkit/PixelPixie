@@ -24,8 +24,14 @@ namespace Pixie
         /// <param name="patternWidthCount">width of grid in symbols (cells)</param>
         /// <param name="patternHeightCount">height of grid in symbols (cells)</param>
         /// <returns>production ready bitmap</returns>
-        public Bitmap GeneratePattern(int patternWidthCount, int patternHeightCount)
+        public Bitmap GeneratePattern(int patternWidthCount, int patternHeightCount, EnumerationStyle enumerationStyle)
         {
+            if (enumerationStyle != EnumerationStyle.None)
+            {
+                patternHeightCount++;
+                patternWidthCount++;
+            }
+
             var pattentWidth = patternWidthCount * _settings.SymbolWidth +
                                (patternWidthCount - 1) * _settings.DelimeterWidth;
             var patternHeight = patternHeightCount * _settings.SymbolHeight +
@@ -37,6 +43,7 @@ namespace Pixie
             FillBackground(pattern);
             DrawVerticalLines(pattern);
             DrawHorizontalLines(pattern);
+            Enumerate(pattern, enumerationStyle);
 
             return pattern;
         }
@@ -75,6 +82,48 @@ namespace Pixie
             for (var i = _settings.SymbolWidth; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
             {
                 g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterWidth), i, 0, i, pattern.Height);
+            }
+        }
+
+        /// <summary>
+        /// Draws line and column numbers
+        /// </summary>
+        /// <param name="pattern">bitmap to draw in</param>
+        /// <param name="enumerationStyle">style of digits</param>
+        private void Enumerate(Bitmap pattern, EnumerationStyle enumerationStyle)
+        {
+            // 72 pixels in one pt
+            const int PixelsPerPoint = 72;
+            if(enumerationStyle == EnumerationStyle.None)
+                return;
+            
+            var graphics = Graphics.FromImage(pattern);
+
+            // rows and column numbers will 2 times smaller 
+            var fontSize = (float)(_settings.SymbolHeight * 0.5 * PixelsPerPoint / pattern.VerticalResolution);
+            // align vertically in center
+            int topPadding = _settings.SymbolHeight / 4 - 1;
+            
+            var font = new Font(FontFamily.GenericMonospace, fontSize);
+            var brush = new SolidBrush(_delimeterColor);
+
+            // select string format specifier based on enumeration style
+            var numbersStyle = enumerationStyle == EnumerationStyle.Hex ? "X" : "D2";
+            
+            // Enumerate rows
+            for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
+                i < pattern.Height; 
+                i += rowHeight)
+            {
+                graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i + topPadding);
+            }
+
+            // Enumerate columns
+            for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = 0;
+                i < pattern.Width;   
+                i += columnWidth)
+            {
+                graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, topPadding);
             }
         }
     }
