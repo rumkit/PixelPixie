@@ -54,15 +54,15 @@ All configuration is done via JSON config file. Please note that comments are no
 
 ```YAML
 {
-  "BitsPerPixel": 2,				// How many bits per pixel are used in a result array
-  "SymbolWidth": 12,				// One symbol dimensions in pixels
-  "SymbolHeight": 18,				//
-  "DelimeterWidth": 1,				// Symbol delimeter width and height
-  "DelimeterHeight": 1,				//
-  "DelimeterColor": "#FF0000",		// Color of delimeter in generated pattern
-  "ColorMapping": {					// A dictionary that is used to map a color in bitmap to
-    "#FFFFFF": 0,					// a bit sequence. Bit sequence is stored in DEC. And
-    "#000000": 1,					// only first N bits (BitsPerPixel) are taken in account
+  "BitsPerPixel": 2,                // How many bits per pixel are used in a result array
+  "SymbolWidth": 12,                // One symbol dimensions in pixels
+  "SymbolHeight": 18,               //
+  "DelimeterWidth": 1,              // Symbol delimeter width and height
+  "DelimeterHeight": 1,             //
+  "DelimeterColor": "#FF0000",      // Color of delimeter in generated pattern
+  "ColorMapping": {                 // A dictionary that is used to map a color in bitmap to
+    "#FFFFFF": 0,                   // a bit sequence. Bit sequence is stored in DEC. And
+    "#000000": 1,                   // only first N bits (BitsPerPixel) are taken in account
     "#969696": 2
   }
 }
