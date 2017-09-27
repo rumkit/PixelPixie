@@ -1,6 +1,6 @@
 # PixelPixie [![Build Status](https://travis-ci.org/rumkit/PixelPixie.svg?branch=master)](https://travis-ci.org/rumkit/PixelPixie)
 
-<img src="https://raw.githubusercontent.com/rumkit/PixelPixie/master/pixie.png" width="128">
+<img src="images/pixie.png" width="128">
 
 #### Motivation
 
