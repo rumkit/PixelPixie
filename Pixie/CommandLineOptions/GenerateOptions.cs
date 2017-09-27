@@ -13,7 +13,7 @@ namespace Pixie
         [Option('o', "output", HelpText = "output file name", DefaultValue = "output.png")]
         public override string OutputFileName { get; set; }
 
-        [Option('n', "enumerate", HelpText = "draw grid rows and columns numbers. Use '-n Hex' or '-n Decimal'", DefaultValue = Pixie.EnumerationStyle.None)]
+        [Option('n', "enumerate", HelpText = "draw grid rows and columns numbers. Use '-n Hex' or '-n Decimal'. Resulting image should be parsed with -h option", DefaultValue = Pixie.EnumerationStyle.None)]
         public EnumerationStyle EnumerationStyle { get; set; }
     }
 }
