@@ -1,5 +1,10 @@
-﻿using System.Drawing;
+﻿using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Text;
+using System.Xml;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Pixie
 {
@@ -11,12 +16,17 @@ namespace Pixie
         private PixelSettings _settings;
         private Color _delimeterColor;
         private Color _backGroundColor;
+        private Dictionary<int, Color> Colors = new Dictionary<int, Color>();
 
         public PatternGenerator(PixelSettings settings)
         {
             _settings = settings;
             _delimeterColor = ColorTranslator.FromHtml(_settings.DelimeterColor);
             _backGroundColor = ColorTranslator.FromHtml(_settings.BackgroundColor);
+            foreach (var i in settings.ColorMapping)
+            {
+                Colors.Add(i.Value, ColorTranslator.FromHtml(i.Key));
+            }
         }
 
         /// <summary>
@@ -25,7 +35,8 @@ namespace Pixie
         /// <param name="patternWidthCount">width of grid in symbols (cells)</param>
         /// <param name="patternHeightCount">height of grid in symbols (cells)</param>
         /// <returns>production ready bitmap</returns>
-        public Bitmap GeneratePattern(int patternWidthCount, int patternHeightCount, EnumerationStyle enumerationStyle)
+        public Bitmap GeneratePattern(int patternWidthCount, int patternHeightCount,
+            EnumerationStyle enumerationStyle, byte[] sampleData = null)
         {
             if (enumerationStyle != EnumerationStyle.None)
             {
@@ -45,7 +56,8 @@ namespace Pixie
             DrawVerticalLines(pattern);
             DrawHorizontalLines(pattern);
             Enumerate(pattern, enumerationStyle);
-
+            if (sampleData != null)
+                FillSampleData(pattern, sampleData);
             return pattern;
         }
 
@@ -95,16 +107,16 @@ namespace Pixie
         {
             // 72 pixels in one pt
             const int PixelsPerPoint = 72;
-            if(enumerationStyle == EnumerationStyle.None)
+            if (enumerationStyle == EnumerationStyle.None)
                 return;
-            
+
             var graphics = Graphics.FromImage(pattern);
 
             // rows and column numbers will 2 times smaller 
             var fontSize = (float)(_settings.SymbolHeight * 0.5 * PixelsPerPoint / pattern.VerticalResolution);
             // align vertically in center
             int topPadding = _settings.SymbolHeight / 4 - 1;
-            
+
             var font = new Font(FontFamily.GenericMonospace, fontSize);
             var brush = new SolidBrush(_delimeterColor);
 
@@ -116,7 +128,7 @@ namespace Pixie
 
             // Enumerate rows
             for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
-                i < pattern.Height; 
+                i < pattern.Height;
                 i += rowHeight)
             {
                 graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i + topPadding);
@@ -128,6 +140,38 @@ namespace Pixie
                 i += columnWidth)
             {
                 graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, topPadding);
+            }
+        }
+
+        private void FillSampleData(Bitmap pattern, byte[] sampleData)
+        {
+            // todo: add arrat length check
+            var bitArray = new BitArray(sampleData);
+            int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
+            int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
+            int rowCount = pattern.Width / columnWidth;
+            int bitArrayIndex = 0;
+
+            for (int j = 0; j < pattern.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
+            {
+                for (int i = 0; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
+                {
+                    FillSymbol(i, j, pattern, bitArray, ref bitArrayIndex);
+                }
+            }
+
+
+        }
+
+        private void FillSymbol(int i, int j, Bitmap pattern, BitArray sampleData, ref int index)
+        {
+            for (int y = j; y < j + _settings.SymbolHeight; y++)
+            {
+                for (int x = i; x < _settings.SymbolWidth + i; x++, index += _settings.BitsPerPixel)
+                {
+                    var pixelValue = sampleData.ToInt32(index, _settings.BitsPerPixel);
+                    pattern.SetPixel(x, y, Colors[pixelValue]);
+                }
             }
         }
     }

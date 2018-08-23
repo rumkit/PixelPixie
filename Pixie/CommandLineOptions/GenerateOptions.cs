@@ -15,5 +15,8 @@ namespace Pixie
 
         [Option('n', "enumerate", HelpText = "draw grid rows and columns numbers. Use '-n Hex' or '-n Decimal'. Resulting image should be parsed with -h option", DefaultValue = Pixie.EnumerationStyle.None)]
         public EnumerationStyle EnumerationStyle { get; set; }
+
+        [Option('i', "input", HelpText = "path to csv file with HEX data, that will be parsed and used to fill images with symbols", DefaultValue = null)]
+        public string InpudFileName { get; set; }
     }
 }
