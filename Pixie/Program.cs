@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -90,7 +91,11 @@ namespace Pixie
             {
                 var settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 var generator = new PatternGenerator(settings);
-                var pattern = generator.GeneratePattern(options.PatternWidth, options.PatternHeight, options.EnumerationStyle);
+                byte[] sampleData = null;
+                if (options.InputFileName != null)
+                    sampleData = ParseDataFile(options.InputFileName);
+                var pattern = generator.GeneratePattern(options.PatternWidth,
+                    options.PatternHeight, options.EnumerationStyle, sampleData);
                 pattern.Save(options.OutputFileName);
             }
             catch (Exception e)
@@ -103,5 +108,16 @@ namespace Pixie
             return (int)ErrorCode.NoError;
         }
 
+        private static byte[] ParseDataFile(string optionsInputFileName)
+        {
+            var text = File.ReadAllText(optionsInputFileName);
+            var byteStrings = text.Split(new []{","}, StringSplitOptions.RemoveEmptyEntries);
+            var bytes = byteStrings.Select(
+                s =>
+                {
+                    return byte.Parse(s.Trim('\r', '\n', ' ').Replace("0x",""), NumberStyles.HexNumber);
+                }).ToArray();
+            return bytes;
+        }
     }
 }

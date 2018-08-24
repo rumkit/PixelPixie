@@ -17,6 +17,6 @@ namespace Pixie
         public EnumerationStyle EnumerationStyle { get; set; }
 
         [Option('i', "input", HelpText = "path to csv file with HEX data, that will be parsed and used to fill images with symbols", DefaultValue = null)]
-        public string InpudFileName { get; set; }
+        public string InputFileName { get; set; }
     }
 }

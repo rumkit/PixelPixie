@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.CodeDom;
+using System.Collections;
+using System.Linq;
 
 namespace Pixie
 {
@@ -21,6 +24,16 @@ namespace Pixie
                 ret[i] = ReverseBits(ret[i]);
             }
             return ret;
+        }
+
+        public static BitArray ToBitArray(this byte[] array)
+        {
+            var reversedArray = new byte[array.Length];
+            for (int i = 0; i < reversedArray.Length; i++)
+            {
+                reversedArray[i] = ReverseBits(array[i]);
+            }
+            return new BitArray(reversedArray);
         }
 
         /// <summary>
@@ -54,12 +67,15 @@ namespace Pixie
                 0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
             };
 
-        public static int ToInt32(this BitArray array, int startIndex, int length)
+        public static byte ToByte(this BitArray array, int startIndex, int length)
         {
-            int value = 0;
-            for(int i = startIndex; i < startIndex + length; i++)
+            if(length > 8)
+                throw new ArgumentException("Byte value cannot be more than 8-bit long");
+            int endIndex = startIndex + length - 1;
+            byte value = 0;
+            for(int i = endIndex; i >= startIndex; i--)
             {
-                value |= ((array[i] ? 1 : 0) << (i - startIndex));
+                value |= (byte)((array[i] ? 1 : 0) << (endIndex - i));
             }
 
             return value;

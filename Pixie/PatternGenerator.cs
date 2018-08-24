@@ -5,6 +5,7 @@ using System.Drawing.Text;
 using System.Xml;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace Pixie
 {
@@ -145,11 +146,8 @@ namespace Pixie
 
         private void FillSampleData(Bitmap pattern, byte[] sampleData)
         {
-            // todo: add arrat length check
-            var bitArray = new BitArray(sampleData);
-            int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
-            int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
-            int rowCount = pattern.Width / columnWidth;
+            // todo: add array length check
+            var bitArray = sampleData.ToBitArray();
             int bitArrayIndex = 0;
 
             for (int j = 0; j < pattern.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
@@ -169,7 +167,7 @@ namespace Pixie
             {
                 for (int x = i; x < _settings.SymbolWidth + i; x++, index += _settings.BitsPerPixel)
                 {
-                    var pixelValue = sampleData.ToInt32(index, _settings.BitsPerPixel);
+                    var pixelValue = sampleData.ToByte(index, _settings.BitsPerPixel);
                     pattern.SetPixel(x, y, Colors[pixelValue]);
                 }
             }
