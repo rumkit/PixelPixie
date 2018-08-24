@@ -10,6 +10,8 @@ namespace Pixie
     {
         Unsupported,
         RowWise,
-        ColumnWise
+        ColumnWise,
+        RowWiseYReverse,
+        ColumnWiseYReverse
     }
 }

@@ -34,26 +34,31 @@ namespace Pixie
         [DataMember]
         public string BackgroundColor;
 
-        [DataMember(Name="LookupDirection")]
-        private string _lookupDirection;
+        [DataMember(Name="CellsLookupDirection")]
+        private string _cellsLookupDirection;
+
+        [DataMember(Name = "PixelsLookupDirection")]
+        private string _pixelsLookupDirection;
 #pragma warning restore 0649
 
         [DataMember]
         public Dictionary<string, int> ColorMapping;
 
-        public LookupDirection LookupDirection
+        public LookupDirection CellsLookupDirection
         {
             get
             {
-                switch (_lookupDirection)
-                {
-                    case "RowWise":
-                        return LookupDirection.RowWise;
-                    case "ColumnWise":
-                        return LookupDirection.ColumnWise;
-                    default:
-                        return LookupDirection.Unsupported;
-                }
+                var success = Enum.TryParse(_cellsLookupDirection, true, out LookupDirection direction);
+                return success ? direction : LookupDirection.Unsupported;
+            }
+        }
+
+        public LookupDirection PixelsLookupDirection
+        {
+            get
+            {
+                var success = Enum.TryParse(_pixelsLookupDirection, true, out LookupDirection direction);
+                return success ? direction : LookupDirection.Unsupported;
             }
         }
 

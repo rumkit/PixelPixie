@@ -152,54 +152,44 @@ namespace Pixie
             var cellWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
             var cellHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
 
-            var directionSelector = LookUpDirectionSelector.GetSelector(LookupDirection.RowWise);
-
-            // Skip first row and columnt if they were used for rows/columns numbers
-            directionSelector.RowStart = enumerationStyle == EnumerationStyle.None
-                ? 0
-                : cellWidth;
-            directionSelector.ColumntStart = enumerationStyle == EnumerationStyle.None
-                ? 0
-                : cellHeight;
-
-            directionSelector.RowEnd = pattern.Width;
-            directionSelector.ColumnEnd = pattern.Height;
-
-            directionSelector.RowDelta = cellWidth;
-            directionSelector.ColumntDelta = cellHeight;
+            var pixelTracker = new BitmapPixelTracker(_settings.CellsLookupDirection)
+            {
+                // Skip first row and columnt if they were used for rows/columns numbers
+                XStart = enumerationStyle == EnumerationStyle.None? 0: cellWidth,
+                XEnd = pattern.Width,
+                XDelta = cellWidth,
+                // Skip first row and columnt if they were used for rows/columns numbers
+                YStart = enumerationStyle == EnumerationStyle.None? 0: cellHeight,
+                YEnd = pattern.Height,
+                YDelta = cellHeight
+            };
 
             // Process cells
-            directionSelector.ProcessSymbol((x, y) => FillSymbol(x, y, pattern, bitArray, ref bitArrayIndex));
+            foreach (var pixel in pixelTracker)
+            {
+                FillSymbol(pixel.X, pixel.Y, pattern, bitArray, ref bitArrayIndex);
+            }
         }
 
         private void FillSymbol(int i, int j, Bitmap pattern, BitArray sampleData, ref int index)
         {
-            var directionSelector = LookUpDirectionSelector.GetSelector(_settings.LookupDirection);
-            directionSelector.RowStart = i;
-            directionSelector.ColumntStart = j;
-            directionSelector.RowEnd = _settings.SymbolWidth + i;
-            directionSelector.ColumnEnd = _settings.SymbolHeight + j;
-            directionSelector.RowDelta = 1;
-            directionSelector.ColumntDelta = 1;
-
-            // lamba cannot use ref value
-            var indexClosure = index;
-            try
+            var pixelTracker = new BitmapPixelTracker(_settings.PixelsLookupDirection)
             {
-                directionSelector.ProcessSymbol((x, y) =>
-                {
-                    // If there was not enough data, just skip the symbol (leaves cell empty)
-                    if (indexClosure >= sampleData.Length)
-                        return;
-                    var pixelValue = sampleData.ToByte(indexClosure, _settings.BitsPerPixel);
-                    pattern.SetPixel(x, y, Colors[pixelValue]);
-                    indexClosure += _settings.BitsPerPixel;
-                });
-            }
-            finally
+                XStart = i,
+                XEnd = _settings.SymbolWidth + i,
+                XDelta = 1,
+                YStart = j,
+                YEnd = _settings.SymbolHeight + j,
+                YDelta = 1
+            };
+            foreach (var pixel in pixelTracker)
             {
-                // restore value so the ref make sense
-                index = indexClosure;
+                // If there was not enough data, just skip the symbol (leaves cell empty)
+                if (index >= sampleData.Length)
+                    return;
+                var pixelValue = sampleData.ToByte(index, _settings.BitsPerPixel);
+                pattern.SetPixel(pixel.X, pixel.Y, Colors[pixelValue]);
+                index += _settings.BitsPerPixel;
             }
         }
     }
