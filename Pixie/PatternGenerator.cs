@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Text;
@@ -167,6 +168,9 @@ namespace Pixie
             {
                 for (int x = i; x < _settings.SymbolWidth + i; x++, index += _settings.BitsPerPixel)
                 {
+                    // If there was not enough data, just skip the symbol (leaves cell empty)
+                    if(index >= sampleData.Length)
+                        return;
                     var pixelValue = sampleData.ToByte(index, _settings.BitsPerPixel);
                     pattern.SetPixel(x, y, Colors[pixelValue]);
                 }
