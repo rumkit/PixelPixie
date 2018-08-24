@@ -59,7 +59,7 @@ namespace Pixie
             DrawHorizontalLines(pattern);
             Enumerate(pattern, enumerationStyle);
             if (sampleData != null)
-                FillSampleData(pattern, sampleData);
+                FillSampleData(pattern, sampleData, enumerationStyle);
             return pattern;
         }
 
@@ -145,20 +145,26 @@ namespace Pixie
             }
         }
 
-        private void FillSampleData(Bitmap pattern, byte[] sampleData)
+        private void FillSampleData(Bitmap pattern, byte[] sampleData, EnumerationStyle enumerationStyle)
         {
-            // todo: add array length check
             var bitArray = sampleData.ToBitArray();
             int bitArrayIndex = 0;
 
-            for (int j = 0; j < pattern.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
+            // Skip first row and columnt if they were used for rows/columns numbers
+            var firstRow = enumerationStyle == EnumerationStyle.None
+                ? 0
+                : _settings.SymbolWidth + _settings.DelimeterWidth;
+            var firstColumn = enumerationStyle == EnumerationStyle.None
+                ? 0
+                : _settings.SymbolHeight + _settings.DelimeterHeight;
+
+            for (int j = firstColumn; j < pattern.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                for (int i = 0; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
+                for (int i = firstRow; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
                 {
                     FillSymbol(i, j, pattern, bitArray, ref bitArrayIndex);
                 }
             }
-
 
         }
 
