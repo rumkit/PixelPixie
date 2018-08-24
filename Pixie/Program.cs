@@ -15,6 +15,8 @@ namespace Pixie
         private static string _invokedVerb;
         private static CommonOptions _suboptions;
 
+        public static PixelSettings Settings { get; private set; }
+
         static int Main(string[] args)
         {
             var options = new CommandLineOptions();
@@ -31,6 +33,7 @@ namespace Pixie
 
 
             int errorCode = (int) ErrorCode.NoError;
+            Settings = PixelSettings.FromFile(_suboptions.PixelSettingsPath);
             if (_invokedVerb == "generate")
             {
                 errorCode = GeneratePattern((GenerateOptions) _suboptions);
@@ -55,8 +58,7 @@ namespace Pixie
             try
             {
                 var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
-                var settings = PixelSettings.FromFile(options.PixelSettingsPath);
-                var mapper = new PixelMapper(bitmap, settings);
+                var mapper = new PixelMapper(bitmap, Settings);
                 var map = mapper.MapPixels(options.SkipHeaders);
                 OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray);
             }
@@ -89,8 +91,7 @@ namespace Pixie
         {
             try
             {
-                var settings = PixelSettings.FromFile(options.PixelSettingsPath);
-                var generator = new PatternGenerator(settings);
+                var generator = new PatternGenerator(Settings);
                 byte[] sampleData = null;
                 if (options.InputFileName != null)
                     sampleData = ParseDataFile(options.InputFileName);

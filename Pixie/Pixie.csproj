@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LookUpDirectionSelector.cs" />
     <Compile Include="CommandLineOptions\CommonOptions.cs" />
     <Compile Include="CommandLineOptions\EnumerationStyle.cs" />
     <Compile Include="ConsoleLogger.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="CommandLineOptions\CommandLineOptions.cs" />
     <Compile Include="CommandLineOptions\GenerateOptions.cs" />
+    <Compile Include="LookupDirection.cs" />
     <Compile Include="OutputFileFormatter.cs" />
     <Compile Include="CommandLineOptions\ParseOptions.cs" />
     <Compile Include="PatternGenerator.cs" />

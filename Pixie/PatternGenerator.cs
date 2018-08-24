@@ -149,37 +149,57 @@ namespace Pixie
         {
             var bitArray = sampleData.ToBitArray();
             int bitArrayIndex = 0;
+            var cellWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
+            var cellHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
+
+            var directionSelector = LookUpDirectionSelector.GetSelector(LookupDirection.RowWise);
 
             // Skip first row and columnt if they were used for rows/columns numbers
-            var firstRow = enumerationStyle == EnumerationStyle.None
+            directionSelector.RowStart = enumerationStyle == EnumerationStyle.None
                 ? 0
-                : _settings.SymbolWidth + _settings.DelimeterWidth;
-            var firstColumn = enumerationStyle == EnumerationStyle.None
+                : cellWidth;
+            directionSelector.ColumntStart = enumerationStyle == EnumerationStyle.None
                 ? 0
-                : _settings.SymbolHeight + _settings.DelimeterHeight;
+                : cellHeight;
 
-            for (int j = firstColumn; j < pattern.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
-            {
-                for (int i = firstRow; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
-                {
-                    FillSymbol(i, j, pattern, bitArray, ref bitArrayIndex);
-                }
-            }
+            directionSelector.RowEnd = pattern.Width;
+            directionSelector.ColumnEnd = pattern.Height;
 
+            directionSelector.RowDelta = cellWidth;
+            directionSelector.ColumntDelta = cellHeight;
+
+            // Process cells
+            directionSelector.ProcessSymbol((x, y) => FillSymbol(x, y, pattern, bitArray, ref bitArrayIndex));
         }
 
         private void FillSymbol(int i, int j, Bitmap pattern, BitArray sampleData, ref int index)
         {
-            for (int y = j; y < j + _settings.SymbolHeight; y++)
+            var directionSelector = LookUpDirectionSelector.GetSelector(_settings.LookupDirection);
+            directionSelector.RowStart = i;
+            directionSelector.ColumntStart = j;
+            directionSelector.RowEnd = _settings.SymbolWidth + i;
+            directionSelector.ColumnEnd = _settings.SymbolHeight + j;
+            directionSelector.RowDelta = 1;
+            directionSelector.ColumntDelta = 1;
+
+            // lamba cannot use ref value
+            var indexClosure = index;
+            try
             {
-                for (int x = i; x < _settings.SymbolWidth + i; x++, index += _settings.BitsPerPixel)
+                directionSelector.ProcessSymbol((x, y) =>
                 {
                     // If there was not enough data, just skip the symbol (leaves cell empty)
-                    if(index >= sampleData.Length)
+                    if (indexClosure >= sampleData.Length)
                         return;
-                    var pixelValue = sampleData.ToByte(index, _settings.BitsPerPixel);
+                    var pixelValue = sampleData.ToByte(indexClosure, _settings.BitsPerPixel);
                     pattern.SetPixel(x, y, Colors[pixelValue]);
-                }
+                    indexClosure += _settings.BitsPerPixel;
+                });
+            }
+            finally
+            {
+                // restore value so the ref make sense
+                index = indexClosure;
             }
         }
     }

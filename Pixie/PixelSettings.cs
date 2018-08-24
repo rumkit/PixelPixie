@@ -33,10 +33,29 @@ namespace Pixie
 
         [DataMember]
         public string BackgroundColor;
+
+        [DataMember(Name="LookupDirection")]
+        private string _lookupDirection;
 #pragma warning restore 0649
 
         [DataMember]
         public Dictionary<string, int> ColorMapping;
+
+        public LookupDirection LookupDirection
+        {
+            get
+            {
+                switch (_lookupDirection)
+                {
+                    case "RowWise":
+                        return LookupDirection.RowWise;
+                    case "ColumnWise":
+                        return LookupDirection.ColumnWise;
+                    default:
+                        return LookupDirection.Unsupported;
+                }
+            }
+        }
 
         public PixelSettings()
         {
