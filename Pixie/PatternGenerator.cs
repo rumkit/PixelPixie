@@ -149,8 +149,7 @@ namespace Pixie
         {
             var bitArray = sampleData.ToBitArray();
             int bitArrayIndex = 0;
-            var cellWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
-            var cellHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
+            
 
             var columnCount = (pattern.Width + _settings.DelimeterWidth) /
                               (_settings.SymbolWidth + _settings.DelimeterWidth);

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.Serialization;
 
 namespace Pixie
 {
@@ -41,12 +39,31 @@ namespace Pixie
             var firstRow = skipHeaders ? _settings.SymbolHeight + _settings.DelimeterHeight : 0;
             var firstColumn = skipHeaders ? _settings.SymbolWidth + _settings.DelimeterWidth : 0;
 
-            for (int j = firstRow; j < _bitmap.Height; j += _settings.SymbolHeight + _settings.DelimeterHeight)
+            var columnCount = (_bitmap.Width + _settings.DelimeterWidth) /
+                              (_settings.SymbolWidth + _settings.DelimeterWidth);
+            var rowCount = (_bitmap.Height + _settings.DelimeterHeight) /
+                           (_settings.SymbolHeight + _settings.DelimeterHeight);
+
+            var pixelTracker = new BitmapPixelTracker(_settings.CellsLookupDirection)
             {
-                for (int i = firstColumn; i < _bitmap.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
-                {
-                    symbols.Add(ProcessSymbol(i, i + _settings.SymbolWidth, j, j + _settings.SymbolHeight));
-                }
+                // Skip first row and columnt if they were used for rows/columns numbers
+                XStart = skipHeaders ? 1 : 0,
+                XEnd = columnCount,
+                XDelta = 1,
+                // Skip first row and columnt if they were used for rows/columns numbers
+                YStart = skipHeaders ? 1 : 0,
+                YEnd = rowCount,
+                YDelta = 1
+            };
+
+            // Process cells (symbols)
+            // in this case pixel coords will correspond to cell
+            foreach (var pixel in pixelTracker)
+            {
+                // get symbol top leftPoint
+                var symbolX = pixel.X * (_settings.DelimeterWidth + _settings.SymbolWidth);
+                var symbolY = pixel.Y * (_settings.DelimeterHeight + _settings.SymbolHeight);
+                symbols.Add(ProcessSymbol(symbolX, symbolX + _settings.SymbolWidth, symbolY, symbolY + _settings.SymbolHeight));
             }
 
             return symbols;
@@ -66,18 +83,24 @@ namespace Pixie
             var bitArray = new BitArray(bitsCount);
             int arrayPosition = 0;
 
-            for (var j = symbolYStart; j < symbolYEnd; j++)
+            var pixelTracker = new BitmapPixelTracker(_settings.PixelsLookupDirection)
             {
-                for (var i = symbolXStart; i < symbolXEnd; i++)
+                XStart = symbolXStart,
+                XEnd = symbolXEnd,
+                XDelta = 1,
+                YStart = symbolYStart,
+                YEnd = symbolYEnd,
+                YDelta = 1
+            };
+            foreach (var pixel in pixelTracker)
+            {
+                try
                 {
-                    try
-                    {
-                        ProcessPixel(_bitmap.GetPixel(i, j), _settings.BitsPerPixel, bitArray, ref arrayPosition);
-                    }
-                    catch (PixelProcessingException e)
-                    {
-                        throw new PixelProcessingException( $"Problem detected while processing pixel at {i},{j}", e);
-                    }
+                    ProcessPixel(_bitmap.GetPixel(pixel.X, pixel.Y), _settings.BitsPerPixel, bitArray, ref arrayPosition);
+                }
+                catch (PixelProcessingException e)
+                {
+                    throw new PixelProcessingException($"Problem detected while processing pixel at {pixel.X},{pixel.Y}", e);
                 }
             }
 
@@ -110,30 +133,4 @@ namespace Pixie
             }
         }
     }
-
-    [Serializable]
-    internal class PixelProcessingException : Exception
-    {
-        public PixelProcessingException()
-        {
-        }
-
-        public PixelProcessingException(string message) : base(message)
-        {
-           
-        }
-
-        public PixelProcessingException(string message, Exception inner) : base(message, inner)
-        {
-           
-        }
-
-        protected PixelProcessingException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-    }
-     
-    
 }

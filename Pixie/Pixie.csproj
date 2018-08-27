@@ -66,6 +66,7 @@
     <Compile Include="PatternGenerator.cs" />
     <Compile Include="Pixel.cs" />
     <Compile Include="PixelMapper.cs" />
+    <Compile Include="PixelProcessingException.cs" />
     <Compile Include="PixelSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
