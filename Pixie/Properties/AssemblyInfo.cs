@@ -14,7 +14,7 @@ using CommandLine;
 #endif
 [assembly: AssemblyCompany("RumCode")]
 [assembly: AssemblyProduct("Pixie")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -36,11 +36,12 @@ using CommandLine;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
-[assembly: AssemblyInformationalVersion("1.2")]
+[assembly: AssemblyVersion("1.3.*")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyInformationalVersion("1.3")]
 [assembly: AssemblyUsage(
     "Usage: pixie parse someimage.bmp",
-    "       pixie parse input.bmp --output=array.txt -c myconfig.json",
+    "       pixie parse input.bmp --output=array.txt -s -c myconfig.json",
     "       pixie generate -w 5 -h 10",
+    "       pixie generate -w 16 -h 16 -i font.txt",
     "You can get additional help by using 'pixie parse --help' for example")]

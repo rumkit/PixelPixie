@@ -196,7 +196,7 @@ namespace Pixie
                 if (index >= sampleData.Length)
                     return;
                 var pixelValue = sampleData.ToByte(index, _settings.BitsPerPixel);
-                pattern.SetPixel(pixel.X, pixel.Y, Colors[pixelValue]);
+                pattern.SetPixel(pixel.X + i, pixel.Y + j, Colors[pixelValue]);
                 index += _settings.BitsPerPixel;
             }
         }

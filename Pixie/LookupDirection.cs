@@ -12,6 +12,7 @@ namespace Pixie
         RowWise,
         ColumnWise,
         RowWiseYReverse,
-        ColumnWiseYReverse
+        ColumnWiseYReverse,
+        UserDefined
     }
 }

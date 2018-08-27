@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -39,10 +40,27 @@ namespace Pixie
 
         [DataMember(Name = "PixelsLookupDirection")]
         private string _pixelsLookupDirection;
+
+        [DataMember(Name = "UserDefinedPixelOrder")]
+        private int[][] _pixelOrder;
+
+        [DataMember(Name = "UserDefinedBlockOrder")]
+        private int[][] _blockOrder;
 #pragma warning restore 0649
 
         [DataMember]
         public Dictionary<string, int> ColorMapping;
+
+        private Dictionary<int, Pixel> _symbolPixelOrder;
+        public Dictionary<int,Pixel> PixelOrder
+        {
+            get
+            {
+                if (_pixelOrder != null && _blockOrder != null)
+                    return _symbolPixelOrder ?? (_symbolPixelOrder = GetPixelOrder());
+                throw new ArgumentException("Check config for UserDefined orders");
+            }
+        }
 
         public LookupDirection CellsLookupDirection
         {
@@ -91,6 +109,31 @@ namespace Pixie
                 throw;
             }
             
+        }
+
+        private Dictionary<int, Pixel> GetPixelOrder()
+        {
+            var pixelOrder2D = _pixelOrder.To2D();
+            var blockOrder2D = _blockOrder.To2D();
+            var elementsPerBlock = pixelOrder2D.Length;
+            
+            var symbolHeight = blockOrder2D.GetLength(0) * pixelOrder2D.GetLength(0);
+            var symbolWidth = blockOrder2D.GetLength(1) * pixelOrder2D.GetLength(1);
+            var resultOrder = new Dictionary<int, Pixel>();
+            for (int j = 0; j < symbolHeight; j++)
+            {
+                for (int i = 0; i < symbolWidth; i++)
+                {
+                    var blockI = i / pixelOrder2D.GetLength(1);
+                    var blockJ = j / pixelOrder2D.GetLength(0);
+                    var startValue = blockOrder2D[blockJ,blockI] * elementsPerBlock;
+                    var pixelI = i % pixelOrder2D.GetLength(1);
+                    var pixelJ = j % pixelOrder2D.GetLength(0);
+                    resultOrder.Add(startValue + pixelOrder2D[pixelJ,pixelI], new Pixel(i, j));
+                }
+            }
+
+            return resultOrder;
         }
     }
 }

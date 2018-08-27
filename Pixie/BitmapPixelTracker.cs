@@ -34,6 +34,8 @@ namespace Pixie
                     return GetRowWiseReverseEnumerator();
                 case LookupDirection.ColumnWiseYReverse:
                     return GetColumnWiseReverseEnumerator();
+                case LookupDirection.UserDefined:
+                    return GetUserDefinedEnumerator();
                 default:
                     throw new ArgumentException("Lookupdirection " + _direction + " not supported");
             }
@@ -89,5 +91,13 @@ namespace Pixie
             }
         }
 
+        private IEnumerator<Pixel> GetUserDefinedEnumerator()
+        {
+            var pixelOrder = Program.Settings.PixelOrder;
+            for (int i = 0; i < pixelOrder.Count; i++)
+            {
+                yield return pixelOrder[i];
+            }
+        }
     }
 }
