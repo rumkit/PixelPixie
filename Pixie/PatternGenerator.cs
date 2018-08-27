@@ -152,22 +152,31 @@ namespace Pixie
             var cellWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
             var cellHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
 
+            var columnCount = (pattern.Width + _settings.DelimeterWidth) /
+                              (_settings.SymbolWidth + _settings.DelimeterWidth);
+            var rowCount = (pattern.Height + _settings.DelimeterHeight) /
+                           (_settings.SymbolHeight + _settings.DelimeterHeight);
+
             var pixelTracker = new BitmapPixelTracker(_settings.CellsLookupDirection)
             {
                 // Skip first row and columnt if they were used for rows/columns numbers
-                XStart = enumerationStyle == EnumerationStyle.None? 0: cellWidth,
-                XEnd = pattern.Width,
-                XDelta = cellWidth,
+                XStart = enumerationStyle == EnumerationStyle.None? 0: 1,
+                XEnd = columnCount,
+                XDelta = 1,
                 // Skip first row and columnt if they were used for rows/columns numbers
-                YStart = enumerationStyle == EnumerationStyle.None? 0: cellHeight,
-                YEnd = pattern.Height,
-                YDelta = cellHeight
+                YStart = enumerationStyle == EnumerationStyle.None? 0: 1,
+                YEnd = rowCount,
+                YDelta = 1
             };
 
             // Process cells
+            // in this case pixel coords will correspond to cell
             foreach (var pixel in pixelTracker)
             {
-                FillSymbol(pixel.X, pixel.Y, pattern, bitArray, ref bitArrayIndex);
+                // get symbol top leftPoint
+                var symbolX = pixel.X * (_settings.DelimeterWidth + _settings.SymbolWidth);
+                var symbolY = pixel.Y * (_settings.DelimeterHeight + _settings.SymbolHeight);
+                FillSymbol(symbolX, symbolY, pattern, bitArray, ref bitArrayIndex);
             }
         }
 
