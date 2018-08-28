@@ -96,7 +96,8 @@ namespace Pixie
             var pixelOrder = Program.Settings.PixelOrder;
             for (int i = 0; i < pixelOrder.Count; i++)
             {
-                yield return pixelOrder[i];
+                var pixelOffset = pixelOrder[i];
+                yield return new Pixel(pixelOffset.X + XStart, pixelOffset.Y + YStart); 
             }
         }
     }
