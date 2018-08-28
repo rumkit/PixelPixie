@@ -114,8 +114,8 @@ namespace Pixie
 
             var graphics = Graphics.FromImage(pattern);
 
-            // rows and column numbers will 2 times smaller 
-            var fontSize = (float)(_settings.SymbolHeight * 0.5 * PixelsPerPoint / pattern.VerticalResolution);
+            // rows and column numbers will be 0.75 of symbol size
+            var fontSize = (float)(_settings.SymbolHeight * 0.75 * PixelsPerPoint / pattern.VerticalResolution);
             // align vertically in center
             int topPadding = _settings.SymbolHeight / 4 - 1;
 
@@ -126,7 +126,7 @@ namespace Pixie
             var numbersStyle = enumerationStyle == EnumerationStyle.Hex ? "X" : "D2";
 
             // make numbers more readable on low resolutions
-            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
+            graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             // Enumerate rows
             for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
