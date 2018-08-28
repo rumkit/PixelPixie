@@ -2,18 +2,19 @@
 
 namespace Pixie
 {
+    [Verb("parse", HelpText = "parses  a pattern filled with graphical font to a byte array")]
     internal class ParseOptions : CommonOptions
     {
         [Option('s', "single-array", HelpText = "place all characters to single array")]
         public bool SingleArray { get; set; }
 
-        [ValueOption(0)]
+        [Value(0, HelpText = "image containing font bitmap", MetaName = "file name", Required = true)]
         public string InputFileName { get; set; }
 
-        [Option('o', "output", HelpText = "output file name", DefaultValue = "output.txt")]
+        [Option('o', "output", HelpText = "output file name", Default = "output.txt")]
         public override string OutputFileName { get; set; }
 
-        [Option('h', "skip-headers", HelpText = "skip headers with rows and columns numbers (first row and first column are not processed)", DefaultValue = false)]
+        [Option('h', "skip-headers", HelpText = "skip headers with rows and columns numbers (first row and first column are not processed)", Default = false)]
         public bool SkipHeaders { get; set; }
     }
 }

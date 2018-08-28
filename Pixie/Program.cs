@@ -12,39 +12,26 @@ namespace Pixie
 
     class Program
     {
-        private static string _invokedVerb;
-        private static CommonOptions _suboptions;
-
         public static PixelSettings Settings { get; private set; }
+        private static string _outputFileName;
 
         static int Main(string[] args)
         {
-            var options = new CommandLineOptions();
+            // Parse command-line arguments
+            var errorCode = Parser.Default.ParseArguments<GenerateOptions, ParseOptions>(args)
+                .MapResult(
+                    (GenerateOptions options) => GeneratePattern(options),
+                    (ParseOptions options) => ParseFontImage(options),
+                    errs => (int) ErrorCode.ArgumentsMismatch);
             
-            if (!Parser.Default.ParseArguments(args, options,
-                (verb, suboptions) =>
-                {
-                    _invokedVerb = verb;
-                    _suboptions = (CommonOptions)suboptions;
-                }))
-            {
-                Environment.Exit((int)ErrorCode.ArgumentsMismatch);
-            }
-
-
-            int errorCode = (int) ErrorCode.NoError;
-            Settings = PixelSettings.FromFile(_suboptions.PixelSettingsPath);
-            if (_invokedVerb == "generate")
-            {
-                errorCode = GeneratePattern((GenerateOptions) _suboptions);
-            }
-            if (_invokedVerb == "parse")
-            {
-                errorCode = ParseFontImage((ParseOptions) _suboptions);
-            }
-
             if(errorCode == (int)ErrorCode.NoError)
-                ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_suboptions.OutputFileName}\"", MessageType.Info);
+                ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_outputFileName}\"", MessageType.Info);
+            else
+            {
+                //todo: write all error-related text here. e.g. MakeError(...)
+                Console.WriteLine("Error! Can't parse arguments");
+                Environment.Exit(errorCode);
+            }
             return errorCode;
         }
 
@@ -57,6 +44,12 @@ namespace Pixie
         {
             try
             {
+                if (options.ExcessValue != null)
+                    return (int)ErrorCode.ArgumentsMismatch;
+
+                Settings = PixelSettings.FromFile(options.PixelSettingsPath);
+                _outputFileName = options.OutputFileName;
+
                 var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
                 var mapper = new PixelMapper(bitmap, Settings);
                 var map = mapper.MapPixels(options.SkipHeaders);
@@ -91,6 +84,12 @@ namespace Pixie
         {
             try
             {
+                if (options.ExcessValue != null)
+                    return (int)ErrorCode.ArgumentsMismatch;
+
+                Settings = PixelSettings.FromFile(options.PixelSettingsPath);
+                _outputFileName = options.OutputFileName;
+
                 var generator = new PatternGenerator(Settings);
                 byte[] sampleData = null;
                 if (options.InputFileName != null)

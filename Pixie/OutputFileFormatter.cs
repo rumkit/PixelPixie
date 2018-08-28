@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Pixie
 {
@@ -25,10 +27,13 @@ namespace Pixie
                 using (var stream = File.Open(fileName, FileMode.Create))
                 using (var writer = new StreamWriter(stream))
                 {
+                    var fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+                    var copyRight = fileVersionInfo.LegalCopyright;
+                    var version = fileVersionInfo.ProductVersion;
                     // Make header
                     writer.WriteLine("//");
                     writer.WriteLine("//");
-                    writer.WriteLine("// Generated with PixelPixie (c) 2016");
+                    writer.WriteLine($"// Generated with PixelPixie v.{version} {copyRight}");
                     writer.WriteLine("//");
                     writer.WriteLine("//");
                     writer.WriteLine();
