@@ -7,6 +7,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Pixie
 {
@@ -101,6 +102,36 @@ namespace Pixie
         }
 
         /// <summary>
+        /// Loads custom font from resource and returs it
+        /// </summary>
+        /// <param name="size">font size</param>
+        private Font getCustomFont(float size)
+        {
+            // create private font collection object
+            PrivateFontCollection pfc = new PrivateFontCollection();
+
+            // select carefully chosen pixel font from the resources
+            // it's called "Xpaider Pixel Explosion 01", it was taken from 
+            // https://www.dafont.com/xpaider-pixel-explosion-01.font
+            // we assume it's free
+            int fontLength = Properties.Resources.XPAIDERP.Length;
+
+            // create a buffer to read in to
+            byte[] fontdata = Properties.Resources.XPAIDERP;
+
+            // create an unsafe memory block for the font data
+            System.IntPtr data = Marshal.AllocCoTaskMem(fontLength);
+
+            // copy the bytes to the unsafe memory block
+            Marshal.Copy(fontdata, 0, data, fontLength);
+
+            // pass the font to the font collection
+            pfc.AddMemoryFont(data, fontLength);
+
+            return new Font(pfc.Families[0], size); 
+        }
+
+        /// <summary>
         /// Draws line and column numbers
         /// </summary>
         /// <param name="pattern">bitmap to draw in</param>
@@ -116,24 +147,22 @@ namespace Pixie
 
             // rows and column numbers will be 0.75 of symbol size
             var fontSize = (float)(_settings.SymbolHeight * 0.75 * PixelsPerPoint / pattern.VerticalResolution);
-            // align vertically in center
-            int topPadding = _settings.SymbolHeight / 4 - 1;
 
-            var font = new Font(FontFamily.GenericMonospace, fontSize);
+            var font = getCustomFont(fontSize);
             var brush = new SolidBrush(_delimeterColor);
 
             // select string format specifier based on enumeration style
             var numbersStyle = enumerationStyle == EnumerationStyle.Hex ? "X" : "D2";
 
-            // make numbers more readable on low resolutions
-            graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            // we use 6px sized font so we don't need any anti-aliasing
+            graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
 
             // Enumerate rows
             for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
                 i < pattern.Height;
                 i += rowHeight)
             {
-                graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i + topPadding);
+                graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i);
             }
 
             // Enumerate columns
@@ -141,7 +170,7 @@ namespace Pixie
                 i < pattern.Width;
                 i += columnWidth)
             {
-                graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, topPadding);
+                graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, 0);
             }
         }
 
