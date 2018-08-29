@@ -6,7 +6,9 @@ using System.Drawing.Text;
 using System.Xml;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Pixie
@@ -102,32 +104,28 @@ namespace Pixie
         }
 
         /// <summary>
-        /// Loads custom font from resource and returs it
+        /// Loads custom font from resource and returns it
         /// </summary>
+        /// <param name="resourceName">name of resource, containing font</param>
         /// <param name="size">font size</param>
-        private Font getCustomFont(float size)
+        private Font GetCustomFont(string resourceName, float size)
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            
             // create private font collection object
             PrivateFontCollection pfc = new PrivateFontCollection();
 
-            // select carefully chosen pixel font from the resources
-            // it's called "Xpaider Pixel Explosion 01", it was taken from 
-            // https://www.dafont.com/xpaider-pixel-explosion-01.font
-            // we assume it's free
-            int fontLength = Properties.Resources.XPAIDERP.Length;
-
-            // create a buffer to read in to
-            byte[] fontdata = Properties.Resources.XPAIDERP;
-
-            // create an unsafe memory block for the font data
-            System.IntPtr data = Marshal.AllocCoTaskMem(fontLength);
-
-            // copy the bytes to the unsafe memory block
-            Marshal.Copy(fontdata, 0, data, fontLength);
-
-            // pass the font to the font collection
-            pfc.AddMemoryFont(data, fontLength);
-
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                var buffer = new byte[stream.Length];
+                var result = stream.Read(buffer, 0, buffer.Length);
+                // create an unsafe memory block for the font data
+                System.IntPtr data = Marshal.AllocCoTaskMem(buffer.Length);
+                // copy the bytes to the unsafe memory block
+                Marshal.Copy(buffer, 0, data, buffer.Length);
+                // pass the font to the font collection
+                pfc.AddMemoryFont(data, buffer.Length);
+            }
             return new Font(pfc.Families[0], size); 
         }
 
@@ -139,16 +137,17 @@ namespace Pixie
         private void Enumerate(Bitmap pattern, EnumerationStyle enumerationStyle)
         {
             // 72 pixels in one pt
-            const int PixelsPerPoint = 72;
+            const int pixelsPerPoint = 72;
+            const string fontName = "Pixie.Resources.XpaiderPE.TTF";
             if (enumerationStyle == EnumerationStyle.None)
                 return;
 
             var graphics = Graphics.FromImage(pattern);
 
             // rows and column numbers will be 0.75 of symbol size
-            var fontSize = (float)(_settings.SymbolHeight * 0.75 * PixelsPerPoint / pattern.VerticalResolution);
+            var fontSize = (float)(_settings.SymbolHeight * 0.75 * pixelsPerPoint / pattern.VerticalResolution);
 
-            var font = getCustomFont(fontSize);
+            var font = GetCustomFont(fontName, fontSize);
             var brush = new SolidBrush(_delimeterColor);
 
             // select string format specifier based on enumeration style
