@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using CommandLine;
 
@@ -22,17 +23,34 @@ namespace Pixie
                 .MapResult(
                     (GenerateOptions options) => GeneratePattern(options),
                     (ParseOptions options) => ParseFontImage(options),
-                    errs => (int) ErrorCode.ArgumentsMismatch);
+                    errs => ErrorCode.ArgumentsMismatch);
             
-            if(errorCode == (int)ErrorCode.NoError)
+            if(errorCode == ErrorCode.NoError)
                 ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_outputFileName}\"", MessageType.Info);
             else
             {
-                //todo: write all error-related text here. e.g. MakeError(...)
-                Console.WriteLine("Error! Can't parse arguments");
-                Environment.Exit(errorCode);
+                NotifyError(errorCode);
             }
-            return errorCode;
+            return (int)errorCode;
+        }
+
+        private static void NotifyError(ErrorCode errorCode)
+        {
+            switch (errorCode)
+            {
+                case ErrorCode.UknownError:
+                    ConsoleLogger.WriteMessage("There was error, but we have no idea why.", MessageType.Error);
+                    break;
+                case ErrorCode.ArgumentsMismatch:
+                    ConsoleLogger.WriteMessage("Error parsing arguments. Check command line.", MessageType.Error);
+                    break;
+                case ErrorCode.FileNotFound:
+                    ConsoleLogger.WriteMessage("File was not found", MessageType.Error);
+                    break;
+                case ErrorCode.FileParsingError:
+                    ConsoleLogger.WriteMessage("Error parsing file", MessageType.Error);
+                    break;
+            }
         }
 
         /// <summary>
@@ -40,12 +58,12 @@ namespace Pixie
         /// </summary>
         /// <param name="options">parsed command line args</param>
         /// <returns>error code</returns>
-        static int ParseFontImage(ParseOptions options)
+        static ErrorCode ParseFontImage(ParseOptions options)
         {
             try
             {
                 if (options.ExcessValue != null)
-                    return (int)ErrorCode.ArgumentsMismatch;
+                    return ErrorCode.ArgumentsMismatch;
 
                 Settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 _outputFileName = options.OutputFileName;
@@ -57,22 +75,17 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                if (e is FileNotFoundException)
+                switch (e)
                 {
-                    ConsoleLogger.WriteMessage($"File not found or invalid file name \"{e.Message}\"", MessageType.Error);
-                    return (int)ErrorCode.FileNotFound;
+                    case FileNotFoundException _:
+                        return ErrorCode.FileNotFound;
+                    case ArgumentException _:
+                        return ErrorCode.FileParsingError;
+                    default:
+                        return ErrorCode.UknownError;
                 }
-
-                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message, MessageType.Error);
-
-                if (e is ArgumentException)
-                {
-                   return (int)ErrorCode.FileParsingError;
-                }
-               
-                return (int)ErrorCode.UknownError;
             }
-            return (int) ErrorCode.NoError;
+            return ErrorCode.NoError;
         }
 
         /// <summary>
@@ -80,12 +93,12 @@ namespace Pixie
         /// </summary>
         /// <param name="options">parsed command line args</param>
         /// <returns>error code</returns>
-        static int GeneratePattern(GenerateOptions options)
+        static ErrorCode GeneratePattern(GenerateOptions options)
         {
             try
             {
                 if (options.ExcessValue != null)
-                    return (int)ErrorCode.ArgumentsMismatch;
+                    return ErrorCode.ArgumentsMismatch;
 
                 Settings = PixelSettings.FromFile(options.PixelSettingsPath);
                 _outputFileName = options.OutputFileName;
@@ -100,12 +113,18 @@ namespace Pixie
             }
             catch (Exception e)
             {
-                ConsoleLogger.WriteMessage(e.Message + "\n" + e.InnerException?.Message, MessageType.Error);
-                if (e is FileNotFoundException)
-                    return (int)ErrorCode.FileNotFound;
-                return (int)ErrorCode.UknownError;
+                switch (e)
+                {
+                    case PixelProcessingException _:
+                        ConsoleLogger.WriteMessage(e.Message, MessageType.Error);
+                        return ErrorCode.FileParsingError;
+                    case FileNotFoundException _:
+                        return ErrorCode.FileNotFound;
+                    default:
+                        return ErrorCode.UknownError;
+                }
             }
-            return (int)ErrorCode.NoError;
+            return ErrorCode.NoError;
         }
 
         private static byte[] ParseDataFile(string optionsInputFileName)
@@ -115,6 +134,7 @@ namespace Pixie
             var bytes = byteStrings.Select(
                 s =>
                 {
+                    //todo: cutout empty lines
                     return byte.Parse(s.Trim('\r', '\n', ' ').Replace("0x",""), NumberStyles.HexNumber);
                 }).ToArray();
             return bytes;

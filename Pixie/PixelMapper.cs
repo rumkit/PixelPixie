@@ -36,9 +36,6 @@ namespace Pixie
 
             var symbols = new List<byte[]>();
 
-            var firstRow = skipHeaders ? _settings.SymbolHeight + _settings.DelimeterHeight : 0;
-            var firstColumn = skipHeaders ? _settings.SymbolWidth + _settings.DelimeterWidth : 0;
-
             var columnCount = (_bitmap.Width + _settings.DelimeterWidth) /
                               (_settings.SymbolWidth + _settings.DelimeterWidth);
             var rowCount = (_bitmap.Height + _settings.DelimeterHeight) /
