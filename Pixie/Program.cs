@@ -34,8 +34,10 @@ namespace Pixie
             return (int)errorCode;
         }
 
+        // Notifies user about error details
         private static void NotifyError(ErrorCode errorCode)
         {
+            //  todo:  add more details
             switch (errorCode)
             {
                 case ErrorCode.UknownError:
@@ -127,16 +129,13 @@ namespace Pixie
             return ErrorCode.NoError;
         }
 
+        // Parses file with font hex'es (csv file with hex values e.g. 0xDE, 0xAD, 0xBE, 0xEF ...)
         private static byte[] ParseDataFile(string optionsInputFileName)
         {
             var text = File.ReadAllText(optionsInputFileName);
             var byteStrings = text.Split(new []{","}, StringSplitOptions.RemoveEmptyEntries);
             var bytes = byteStrings.Select(
-                s =>
-                {
-                    //todo: cutout empty lines
-                    return byte.Parse(s.Trim('\r', '\n', ' ').Replace("0x",""), NumberStyles.HexNumber);
-                }).ToArray();
+                s => byte.Parse(s.Trim().Replace("0x",""), NumberStyles.HexNumber)).ToArray();
             return bytes;
         }
     }
