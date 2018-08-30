@@ -5,8 +5,12 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Xml;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Pixie
 {
@@ -80,9 +84,13 @@ namespace Pixie
         private void DrawHorizontalLines(Bitmap pattern)
         {
             var g = Graphics.FromImage(pattern);
-            for (var i = _settings.SymbolHeight; i < pattern.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
+            for (var i = _settings.SymbolHeight + _settings.DelimeterHeight/2; i < pattern.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterHeight), 0, i, pattern.Width, i);
+                var pen = new Pen(_delimeterColor, _settings.DelimeterHeight)
+                {
+                    Alignment = PenAlignment.Outset
+                };
+                g.DrawLine(pen, 0, i, pattern.Width, i);
             }
 
         }
@@ -94,10 +102,40 @@ namespace Pixie
         private void DrawVerticalLines(Bitmap pattern)
         {
             var g = Graphics.FromImage(pattern);
-            for (var i = _settings.SymbolWidth; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
+            for (var i = _settings.SymbolWidth + _settings.DelimeterWidth/2; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
             {
-                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterWidth), i, 0, i, pattern.Height);
+                var pen = new Pen(_delimeterColor, _settings.DelimeterWidth)
+                {
+                    Alignment = PenAlignment.Right
+                };
+                g.DrawLine(pen, i, 0, i, pattern.Height);
             }
+        }
+
+        /// <summary>
+        /// Loads custom font from resource and returns it
+        /// </summary>
+        /// <param name="resourceName">name of resource, containing font</param>
+        /// <param name="size">font size</param>
+        private Font GetCustomFont(string resourceName, float size)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            
+            // create private font collection object
+            PrivateFontCollection pfc = new PrivateFontCollection();
+
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                var buffer = new byte[stream.Length];
+                var result = stream.Read(buffer, 0, buffer.Length);
+                // create an unsafe memory block for the font data
+                System.IntPtr data = Marshal.AllocCoTaskMem(buffer.Length);
+                // copy the bytes to the unsafe memory block
+                Marshal.Copy(buffer, 0, data, buffer.Length);
+                // pass the font to the font collection
+                pfc.AddMemoryFont(data, buffer.Length);
+            }
+            return new Font(pfc.Families[0], size); 
         }
 
         /// <summary>
@@ -108,40 +146,43 @@ namespace Pixie
         private void Enumerate(Bitmap pattern, EnumerationStyle enumerationStyle)
         {
             // 72 pixels in one pt
-            const int PixelsPerPoint = 72;
+            const int pixelsPerPoint = 72;
+            const string fontName = "Pixie.Resources.XpaiderPE.TTF";
             if (enumerationStyle == EnumerationStyle.None)
                 return;
 
             var graphics = Graphics.FromImage(pattern);
 
             // rows and column numbers will be 0.75 of symbol size
-            var fontSize = (float)(_settings.SymbolHeight * 0.75 * PixelsPerPoint / pattern.VerticalResolution);
-            // align vertically in center
-            int topPadding = _settings.SymbolHeight / 4 - 1;
+            var fontSize = (float)(_settings.SymbolHeight * 0.75 * pixelsPerPoint / pattern.VerticalResolution);
 
-            var font = new Font(FontFamily.GenericMonospace, fontSize);
+            var font = GetCustomFont(fontName, fontSize);
             var brush = new SolidBrush(_delimeterColor);
 
             // select string format specifier based on enumeration style
             var numbersStyle = enumerationStyle == EnumerationStyle.Hex ? "X" : "D2";
 
-            // make numbers more readable on low resolutions
-            graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            // we use 6px sized font so we don't need any anti-aliasing
+            graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
 
+            var rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
+            var columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
             // Enumerate rows
-            for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
+            for (int rowNumber = 0, i = rowHeight;
                 i < pattern.Height;
-                i += rowHeight)
+                i += rowHeight, rowNumber++)
             {
-                graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i + topPadding);
+                graphics.DrawString(rowNumber.ToString(numbersStyle), font, brush,
+                    new RectangleF(0 - 1,i - 1,_settings.SymbolWidth, _settings.SymbolHeight));
             }
 
             // Enumerate columns
-            for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = columnWidth;
+            for (int columnNumber = 0, i = columnWidth;
                 i < pattern.Width;
-                i += columnWidth)
+                i += columnWidth, columnNumber++)
             {
-                graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, topPadding);
+                graphics.DrawString(columnNumber.ToString(numbersStyle), font, brush,
+                    new RectangleF(i - 1,0 - 1,_settings.SymbolWidth, _settings.SymbolHeight));
             }
         }
 
