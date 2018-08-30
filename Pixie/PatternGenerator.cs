@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Xml;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -83,9 +84,13 @@ namespace Pixie
         private void DrawHorizontalLines(Bitmap pattern)
         {
             var g = Graphics.FromImage(pattern);
-            for (var i = _settings.SymbolHeight; i < pattern.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
+            for (var i = _settings.SymbolHeight + _settings.DelimeterHeight/2; i < pattern.Height; i += _settings.SymbolHeight + _settings.DelimeterHeight)
             {
-                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterHeight), 0, i, pattern.Width, i);
+                var pen = new Pen(_delimeterColor, _settings.DelimeterHeight)
+                {
+                    Alignment = PenAlignment.Outset
+                };
+                g.DrawLine(pen, 0, i, pattern.Width, i);
             }
 
         }
@@ -97,9 +102,13 @@ namespace Pixie
         private void DrawVerticalLines(Bitmap pattern)
         {
             var g = Graphics.FromImage(pattern);
-            for (var i = _settings.SymbolWidth; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
+            for (var i = _settings.SymbolWidth + _settings.DelimeterWidth/2; i < pattern.Width; i += _settings.SymbolWidth + _settings.DelimeterWidth)
             {
-                g.DrawLine(new Pen(_delimeterColor, _settings.DelimeterWidth), i, 0, i, pattern.Height);
+                var pen = new Pen(_delimeterColor, _settings.DelimeterWidth)
+                {
+                    Alignment = PenAlignment.Right
+                };
+                g.DrawLine(pen, i, 0, i, pattern.Height);
             }
         }
 
@@ -156,20 +165,24 @@ namespace Pixie
             // we use 6px sized font so we don't need any anti-aliasing
             graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
 
+            var rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight;
+            var columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth;
             // Enumerate rows
-            for (int rowHeight = _settings.SymbolHeight + _settings.DelimeterHeight, rowNumber = 0, i = rowHeight;
+            for (int rowNumber = 0, i = rowHeight;
                 i < pattern.Height;
-                i += rowHeight)
+                i += rowHeight, rowNumber++)
             {
-                graphics.DrawString(rowNumber++.ToString(numbersStyle), font, brush, 0, i);
+                graphics.DrawString(rowNumber.ToString(numbersStyle), font, brush,
+                    new RectangleF(0 - 1,i - 1,_settings.SymbolWidth, _settings.SymbolHeight));
             }
 
             // Enumerate columns
-            for (int columnWidth = _settings.SymbolWidth + _settings.DelimeterWidth, columnNumber = 0, i = columnWidth;
+            for (int columnNumber = 0, i = columnWidth;
                 i < pattern.Width;
-                i += columnWidth)
+                i += columnWidth, columnNumber++)
             {
-                graphics.DrawString(columnNumber++.ToString(numbersStyle), font, brush, i, 0);
+                graphics.DrawString(columnNumber.ToString(numbersStyle), font, brush,
+                    new RectangleF(i - 1,0 - 1,_settings.SymbolWidth, _settings.SymbolHeight));
             }
         }
 
