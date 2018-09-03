@@ -6,7 +6,8 @@
         NoError = 0,
         ArgumentsMismatch,
         FileNotFound,
-        FileParsingError
+        FileParsingError,
+        ArgumentsNotParsed
 
     }
 }

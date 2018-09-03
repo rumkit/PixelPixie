@@ -23,7 +23,7 @@ namespace Pixie
                 .MapResult(
                     (GenerateOptions options) => GeneratePattern(options),
                     (ParseOptions options) => ParseFontImage(options),
-                    errs => ErrorCode.ArgumentsMismatch);
+                    errs => ErrorCode.ArgumentsNotParsed);
             
             if(errorCode == ErrorCode.NoError)
                 ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_outputFileName}\"", MessageType.Info);
@@ -51,6 +51,9 @@ namespace Pixie
                     break;
                 case ErrorCode.FileParsingError:
                     ConsoleLogger.WriteMessage("Error parsing file", MessageType.Error);
+                    break;
+                case ErrorCode.ArgumentsNotParsed:
+                    //do nothings as this usually means that no arguments were passed to command line
                     break;
             }
         }
