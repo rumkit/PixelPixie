@@ -129,9 +129,6 @@ Each cell of the grid pattern contains one symbol or a part of a symbol. CellsLo
 
     ![ColumnWiseYReverse](images/cells_column_wise_y_reverse.png)
 
- - "UserDefined"
-
- TBD
 
 ## PixelsLookupDirection
 
@@ -156,8 +153,36 @@ This parameter can be
     ![ColumnWiseYReverse](images/pixels_column_wise_y_reverse.png)
 
  - "UserDefined"
+  
+    When this parameter value is used, each grid cell is divided to blocks. Each block must contain a whole number of bytes in the generated array.  
+    Order of blocks inside one cell is controlled by additional parameter - `UserDefinedBlockOrder`. This parameter should be an array.  
+    For example, to describe a cell divided to four blocks, we can write:
+    ``` json
+      "UserDefinedBlockOrder":
+      [
+        [ 0, 1 ],
+        [ 2, 3]
+      ]
+    ```
 
- TBD
+    Order of pixels in each block is controlled by another parameter - `UserDefinedPixelOrder`. This parameter should be an array as well.  
+    Here's an example for 6 by 8 block:
+
+    ``` json
+    "UserDefinedPixelOrder":
+    [      
+      [ 7, 15, 23, 31, 39, 47 ], 
+      [ 6, 14, 22, 30, 38, 46 ],
+      [ 5, 13, 21, 29, 37, 45 ], 
+      [ 4, 12, 20, 28, 36, 44 ], 
+      [ 3, 11, 19, 27, 35, 43 ], 
+      [ 2, 10, 18, 26, 34, 42 ], 
+      [ 1, 9,  17, 25, 33, 41 ], 
+      [ 0, 8,  16, 24, 32, 40 ]
+    ]
+    ```
+     **Important notice**: for historical reasons, order of pixels is Y-reversed, i.e. pixel with a number 0 will be in the **top left** corner of the block, not **bottom left**.
+
 
 # Examples
 
