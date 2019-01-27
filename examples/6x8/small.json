@@ -1,0 +1,15 @@
+{
+  "BitsPerPixel": 1,
+  "SymbolWidth": 6,
+  "SymbolHeight": 8,
+  "DelimeterWidth": 1,
+  "DelimeterHeight": 1,
+  "DelimeterColor": "#FF0000",
+  "BackgroundColor": "#000000",
+  "CellsLookupDirection": "RowWise",
+  "PixelsLookupDirection": "RowWiseYReverse",
+  "ColorMapping": {
+    "#FFFFFF": 1,
+    "#000000": 0
+  }
+}
