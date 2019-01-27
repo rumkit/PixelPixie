@@ -1,8 +1,22 @@
 # PixelPixie [![Build Status](https://travis-ci.org/rumkit/PixelPixie.svg?branch=master)](https://travis-ci.org/rumkit/PixelPixie)
 
-<img src="images/pixie.png" width="128">
+<img align="right" src="images/pixie.png" width="128">
 
-#### Motivation
+- [Motivation](#motivation)
+- [Usage](#usage)
+  - [Generating grid](#generating-grid)
+  - [Parsing font image](#parsing-font-image)
+- [Configuration](#configuration)
+  - [CellsLookUpDirecton](#cellslookupdirecton)
+  - [PixelsLookupDirection](#pixelslookupdirection)
+- [Examples](#examples)
+  - [One symbol](#one-symbol)
+  - [Small font](#small-font)
+  - [More convoluted example](#more-convoluted-example)
+
+
+
+# Motivation
 
 Let's imagine you are an embedded programmer and you want to play with some kind of LCD screen. You want to print some text and that is suddenly hard, because you can only draw pixels. You can't use .ttf fonts because you have no OS in your device (and even if you have, it might have no concept of 'files' alltogether).
 
@@ -12,7 +26,7 @@ Or maybe you are dealing with something like MAX7456 for making OSD overlay and 
 And here is a solution for you problem! PixelPixie is a bitmap font generator that doesn't use hardcoded bits per pixel value or hardcoded symbol size. With PixelPixie you can finally forget that exhausting hours of drawing bitmap font on a piece of paper and then transforming it in hex by hand. Instead you can use generated png with grid and use your preferred graphical editor. And that should be better, right?
 
 
-#### Usage
+# Usage
 
 ```
 Pixie 1.4
@@ -33,7 +47,7 @@ You can get additional help by using 'pixie parse --help' for example
   version     Display version information.
 ```
 
-##### Generating grid
+## Generating grid
 
 ```
 pixie generate
@@ -51,7 +65,9 @@ pixie generate
  -c, --config       (Default: config.json) configuration file path
 ```
 
-##### Parsing font image
+`-i` can be used if you already have your font as an array and you want to transform it into nice grid image.
+
+## Parsing font image
 
 ```
 pixie parse
@@ -66,7 +82,7 @@ pixie parse
 
 ```
 
-#### Configuration
+# Configuration
 
 All configuration is done via JSON config file. Please note that comments are not allowed normally in JSON and are listed here only as reference.
 
@@ -92,9 +108,9 @@ All configuration is done via JSON config file. Please note that comments are no
 
 ``` DelimeterColor  ``` parameter only applies to empty grid generation, as well as ``` ColorMappings ``` are used only while parsing graphical font. Default config.json  can be found [here](https://github.com/rumkit/PixelPixie/blob/master/Pixie/config.json).
 
-#### CellsLookUpDirecton
+## CellsLookUpDirecton
 
-Each cell of the grid pattern contains one symbol or a part of a symbol. CellsLookupDirection controls the order of lookup of symbols in the bitmap file. It can be:
+Each cell of the grid pattern contains one symbol or a part of a symbol. CellsLookupDirection controls the order of lookup of symbols in the bitmap image file. It can be:
 
 `CellsLookupDirection` and `PixelsLookupDirection` can be (each number represents one cell of the grid; 2 by 2 grid for simplicity):
  - "RowWise"
@@ -115,7 +131,9 @@ Each cell of the grid pattern contains one symbol or a part of a symbol. CellsLo
 
  - "UserDefined"
 
-#### PixelsLookupDirection
+ TBD
+
+## PixelsLookupDirection
 
 Each row or column of pixels will be transformed into byte (or several bytes) of data in the output array. `PixelsLookupDirection` parameter controls the order of pixel lookup in each grid cell; we admit that it's not very intuitive.
 
@@ -139,9 +157,11 @@ This parameter can be
 
  - "UserDefined"
 
-### Examples
+ TBD
 
-#### One symbol
+# Examples
+
+## One symbol
 
 Here's our 'symbol' with maximum zoom and pixel grid enabled in the graphical editor of my choice:
 
@@ -185,7 +205,7 @@ unsigned char c1[8] =
 };
 ```
 
-#### Small font
+## Small font
 
 
 Here's a complete 6x8 one bit per pixel font:  
@@ -195,7 +215,7 @@ Since it's so small, let's examine it more closely:
 
 ![big preview](images/small_font_big_preview.png)
 
-Here topmost row and leftmost column are not a part of the font, they are (very useful) numeration of rows and columns.  
+Here topmost row and leftmost column are not a part of the font, they are the numeration of rows and columns. It can be quite handy if you want to know the number of some symbol without counting.  
 The rest of the picture describes a font; red is `DelimeterColor`, it separates symbols, black and white are colors of the font... should I really explain it, it's kinda obvious? Anyway.
 
 Okay, here's JSON config for this font assuming we want each column of pixels to represent one byte with bit 0 being at the top:
@@ -223,3 +243,6 @@ and here's a command line to generate .h file:
 
 We need `--skip-headers` to skip leftmost column and topmost row with symbol numeration.
 
+## More convoluted example
+
+TBD
