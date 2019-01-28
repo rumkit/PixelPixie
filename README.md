@@ -25,7 +25,6 @@ Or maybe you are dealing with something like MAX7456 for making OSD overlay and 
 
 And here is a solution for you problem! PixelPixie is a bitmap font generator that doesn't use hardcoded bits per pixel value or hardcoded symbol size. With PixelPixie you can finally forget that exhausting hours of drawing bitmap font on a piece of paper and then transforming it in hex by hand. Instead you can use generated png with grid and use your preferred graphical editor. And that should be better, right?
 
-
 # Usage
 
 ```
@@ -186,6 +185,8 @@ This parameter can be
 
 # Examples
 
+Complete fonts and configuration files can be found in the [examples](examples).
+
 ## One symbol
 
 Here's our 'symbol' with maximum zoom and pixel grid enabled in the graphical editor of my choice:
@@ -232,9 +233,11 @@ unsigned char c1[8] =
 
 ## Small font
 
+Let's examine a typical pixel font for monochrome LCD display. It's a typical setup; every pixel is controlled by one bit and pixels are composed in vertical columns of 8, so each byte of our font will describe a column of 8 pixels.  
 
 Here's a complete 6x8 one bit per pixel font:  
-![6x8](examples/6x8/small.png)
+
+![6x8](examples/1_bit_6x8/small.png)
 
 Since it's so small, let's examine it more closely:  
 
@@ -270,4 +273,49 @@ We need `--skip-headers` to skip leftmost column and topmost row with symbol num
 
 ## More convoluted example
 
-TBD
+Let's say we use the same monochomre LCD screen but we want a more sizeable font, for example, two times bigger in each dimension. So we want 12 by 16 pixels font. But we need to somehow split each symbol into bytes. How can we do that? That depends on how our code will send those bytes to the display.   
+For instance, we can split each symbol into four blocks; each block will be 6 by 8 pixels, i.e. 6 bytes.
+
+Here's a part of the image for such a font:
+
+![big preview](images/big_font_preview.png)
+
+We'll need to use `PixelsLookupDirection`. With `UserDefinedPixelOrder` we'll have to describe the order of pixels in one block. **Please note that they are in Y-reversed order!**
+
+And with `UserDefinedBlockOrder` we describe the order of blocks in one cell.
+
+Here's config file:
+
+``` json
+{
+  "BitsPerPixel": 1,
+  "SymbolWidth": 12,
+  "SymbolHeight": 16,
+  "DelimeterWidth": 1,
+  "DelimeterHeight": 1,
+  "DelimeterColor": "#FF0000",
+  "BackgroundColor": "#000000",
+  "CellsLookupDirection": "RowWise",
+  "PixelsLookupDirection": "UserDefined",
+  "ColorMapping": {
+    "#FFFFFF": 1,
+    "#000000": 0
+  },
+  "UserDefinedPixelOrder":
+  [      
+    [ 7, 15, 23, 31, 39, 47 ], 
+    [ 6, 14, 22, 30, 38, 46 ],
+    [ 5, 13, 21, 29, 37, 45 ], 
+    [ 4, 12, 20, 28, 36, 44 ], 
+    [ 3, 11, 19, 27, 35, 43 ], 
+    [ 2, 10, 18, 26, 34, 42 ], 
+    [ 1, 9,  17, 25, 33, 41 ], 
+    [ 0, 8,  16, 24, 32, 40 ]
+  ],
+  "UserDefinedBlockOrder":
+  [
+    [ 0, 1 ],
+    [ 2, 3]
+  ]
+}
+```
