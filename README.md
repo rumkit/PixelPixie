@@ -109,7 +109,7 @@ All configuration is done via JSON config file. Please note that comments are no
 
 ## CellsLookUpDirecton
 
-Each cell of the grid pattern contains one symbol or a part of a symbol. CellsLookupDirection controls the order of lookup of symbols in the bitmap image file. It can be:
+Each cell of the grid pattern contains one symbol or a part of a symbol. `CellsLookupDirection` controls the order of lookup of symbols in the bitmap image file. It can be:
 
 `CellsLookupDirection` and `PixelsLookupDirection` can be (each number represents one cell of the grid; 2 by 2 grid for simplicity):
  - "RowWise"
