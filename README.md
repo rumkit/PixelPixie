@@ -223,7 +223,7 @@ unsigned char c1[8] =
 };
 ```
 
-And if we set `PixelsLookupDirection` to `"RowWise`:
+And if we set `PixelsLookupDirection` to `RowWise`:
 ``` cpp
 unsigned char c1[8] = 
 {
