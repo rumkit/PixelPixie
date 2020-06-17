@@ -76,7 +76,7 @@ namespace Pixie
                 var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
                 var mapper = new PixelMapper(bitmap, Settings);
                 var map = mapper.MapPixels(options.SkipHeaders);
-                OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray);
+                OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray, options.ArrayContentOnly);
             }
             catch (Exception e)
             {
