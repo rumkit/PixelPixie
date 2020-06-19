@@ -97,7 +97,8 @@ namespace Pixie
                 }
                 catch (PixelProcessingException e)
                 {
-                    throw new PixelProcessingException($"Problem detected while processing pixel at {pixel.X},{pixel.Y}", e);
+                    throw new PixelProcessingException($"Problem detected while processing pixel at x:{pixel.X}, y:{pixel.Y}. " +
+                                                       $"{e.Message}");
                 }
             }
 

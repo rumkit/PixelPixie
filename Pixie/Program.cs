@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -19,42 +20,44 @@ namespace Pixie
         static int Main(string[] args)
         {
             // Parse command-line arguments
-            var errorCode = Parser.Default.ParseArguments<GenerateOptions, ParseOptions>(args)
-                .MapResult(
-                    (GenerateOptions options) => GeneratePattern(options),
-                    (ParseOptions options) => ParseFontImage(options),
-                    errs => ErrorCode.ArgumentsNotParsed);
-            
-            if(errorCode == ErrorCode.NoError)
-                ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_outputFileName}\"", MessageType.Info);
-            else
+            try
             {
-                NotifyError(errorCode);
+                Parser.Default.ParseArguments<GenerateOptions, ParseOptions>(args)
+                    .MapResult(
+                        (GenerateOptions options) => GeneratePattern(options),
+                        (ParseOptions options) => ParseFontImage(options),
+                        // just exit, this usually means that no arguments were given
+                        (errs) =>
+                        {
+                            System.Environment.Exit(1);
+                            return null;
+                        });
             }
-            return (int)errorCode;
+            catch (Exception e)
+            {
+                NotifyError(e);
+                return 1;
+            }
+
+            ConsoleLogger.WriteMessage($"SUCCESS! \nFile written: \"{_outputFileName}\"", MessageType.Info);
+
+            return 0;
         }
 
         // Notifies user about error details
-        private static void NotifyError(ErrorCode errorCode)
+        private static void NotifyError(Exception e)
         {
-            //  todo:  add more details
-            switch (errorCode)
+            switch (e)
             {
-                case ErrorCode.UknownError:
-                    ConsoleLogger.WriteMessage("There was error, but we have no idea why.", MessageType.Error);
-                    break;
-                case ErrorCode.ArgumentsMismatch:
-                    ConsoleLogger.WriteMessage("Error parsing arguments. Check command line.", MessageType.Error);
-                    break;
-                case ErrorCode.FileNotFound:
-                    ConsoleLogger.WriteMessage("File was not found", MessageType.Error);
-                    break;
-                case ErrorCode.FileParsingError:
-                    ConsoleLogger.WriteMessage("Error parsing file", MessageType.Error);
-                    break;
-                case ErrorCode.ArgumentsNotParsed:
-                    //do nothings as this usually means that no arguments were passed to command line
-                    break;
+                case FileNotFoundException _:
+                    ConsoleLogger.WriteMessage($"File not found: {e.Message}", MessageType.Error);
+                    return;
+                case ArgumentException _:
+                    ConsoleLogger.WriteMessage($"Error parsing file: {e.Message}", MessageType.Error);
+                    return;
+                default:
+                    ConsoleLogger.WriteMessage($"Unexpected error: {e.Message}", MessageType.Error);
+                    return;
             }
         }
 
@@ -62,74 +65,49 @@ namespace Pixie
         /// parses image and write arrays to output file
         /// </summary>
         /// <param name="options">parsed command line args</param>
-        /// <returns>error code</returns>
-        static ErrorCode ParseFontImage(ParseOptions options)
+        /// <returns>always returns null</returns>
+        static object ParseFontImage(ParseOptions options)
         {
-            try
+            if (options.ExcessValue != null)
             {
-                if (options.ExcessValue != null)
-                    return ErrorCode.ArgumentsMismatch;
-
-                Settings = PixelSettings.FromFile(options.PixelSettingsPath);
-                _outputFileName = options.OutputFileName;
-
-                var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
-                var mapper = new PixelMapper(bitmap, Settings);
-                var map = mapper.MapPixels(options.SkipHeaders);
-                OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray, options.ArrayContentOnly);
+                throw new ArgumentException("Argument mismatch!");
             }
-            catch (Exception e)
-            {
-                switch (e)
-                {
-                    case FileNotFoundException _:
-                        return ErrorCode.FileNotFound;
-                    case ArgumentException _:
-                        return ErrorCode.FileParsingError;
-                    default:
-                        return ErrorCode.UknownError;
-                }
-            }
-            return ErrorCode.NoError;
+
+            Settings = PixelSettings.FromFile(options.PixelSettingsPath);
+            _outputFileName = options.OutputFileName;
+
+            var bitmap = new Bitmap(Image.FromFile(options.InputFileName));
+            var mapper = new PixelMapper(bitmap, Settings);
+            var map = mapper.MapPixels(options.SkipHeaders);
+            OutputFileFormatter.WriteOutput(map, options.OutputFileName, options.SingleArray, options.ArrayContentOnly);
+
+            return null;
         }
 
         /// <summary>
         /// Grid pattern generation and writing to file
         /// </summary>
         /// <param name="options">parsed command line args</param>
-        /// <returns>error code</returns>
-        static ErrorCode GeneratePattern(GenerateOptions options)
+        /// <returns>always returns null</returns>
+        static object GeneratePattern(GenerateOptions options)
         {
-            try
+            if (options.ExcessValue != null)
             {
-                if (options.ExcessValue != null)
-                    return ErrorCode.ArgumentsMismatch;
-
-                Settings = PixelSettings.FromFile(options.PixelSettingsPath);
-                _outputFileName = options.OutputFileName;
-
-                var generator = new PatternGenerator(Settings);
-                byte[] sampleData = null;
-                if (options.InputFileName != null)
-                    sampleData = ParseDataFile(options.InputFileName);
-                var pattern = generator.GeneratePattern(options.PatternWidth,
-                    options.PatternHeight, options.EnumerationStyle, sampleData);
-                pattern.Save(options.OutputFileName);
+                throw new ArgumentException("Argument mismatch!");
             }
-            catch (Exception e)
-            {
-                switch (e)
-                {
-                    case PixelProcessingException _:
-                        ConsoleLogger.WriteMessage(e.Message, MessageType.Error);
-                        return ErrorCode.FileParsingError;
-                    case FileNotFoundException _:
-                        return ErrorCode.FileNotFound;
-                    default:
-                        return ErrorCode.UknownError;
-                }
-            }
-            return ErrorCode.NoError;
+
+            Settings = PixelSettings.FromFile(options.PixelSettingsPath);
+            _outputFileName = options.OutputFileName;
+
+            var generator = new PatternGenerator(Settings);
+            byte[] sampleData = null;
+            if (options.InputFileName != null)
+                sampleData = ParseDataFile(options.InputFileName);
+            var pattern = generator.GeneratePattern(options.PatternWidth,
+                options.PatternHeight, options.EnumerationStyle, sampleData);
+            pattern.Save(options.OutputFileName);
+
+            return null;
         }
 
         // Parses file with font hex'es (csv file with hex values e.g. 0xDE, 0xAD, 0xBE, 0xEF ...)
