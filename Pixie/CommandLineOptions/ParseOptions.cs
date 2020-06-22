@@ -5,8 +5,11 @@ namespace Pixie
     [Verb("parse", HelpText = "parses  a pattern filled with graphical font to a byte array")]
     internal class ParseOptions : CommonOptions
     {
-        [Option('s', "single-array", HelpText = "place all characters to single array")]
+        [Option('s', "single-array", HelpText = "place all characters into single array")]
         public bool SingleArray { get; set; }
+        
+        [Option( 'a', "array-contents-only", HelpText = "Omit single array name and curly braces, only produce array contents")]
+        public bool ArrayContentOnly { get; set; }
 
         [Value(0, HelpText = "image containing font bitmap", MetaName = "file name", Required = true)]
         public string InputFileName { get; set; }

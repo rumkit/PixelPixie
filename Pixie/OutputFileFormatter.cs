@@ -20,7 +20,8 @@ namespace Pixie
         /// <param name="symbols">byte[] representation of symbols</param>
         /// <param name="fileName">path to the file to create</param>
         /// <param name="singleArray">shall output be written to single array or one array per symbol</param>
-        public static void WriteOutput(List<byte[]> symbols, string fileName, bool singleArray = false)
+        /// <param name="contentOnly">for single array: output will be just array contents, without name or curly braces</param>
+        public static void WriteOutput(List<byte[]> symbols, string fileName, bool singleArray = false, bool contentOnly = false)
         {
             try
             {
@@ -45,8 +46,15 @@ namespace Pixie
                         var totalLength = (from s in symbols
                             select s.Length).Sum();
 
-                        writer.Write($"unsigned char c[{totalLength}] = \n");
-                        writer.Write("{\n    ");
+                        if (contentOnly == false)
+                        {
+                            writer.Write($"unsigned char c[{totalLength}] = \n");
+                            writer.Write("{\n    ");
+                        }
+                        else
+                        {
+                            writer.Write("    ");
+                        }
 
                         int elementCounter = 0;
 
@@ -64,7 +72,12 @@ namespace Pixie
                                 }
                             }
                         }
-                        writer.Write("\n};");
+
+                        if (contentOnly == false)
+                        {
+                            writer.Write("\n};");
+                        }
+
                         writer.WriteLine("\n");
                     }
                     else
