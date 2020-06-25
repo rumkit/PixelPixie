@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Configuration;
 
 namespace Pixie
 {
@@ -31,6 +32,9 @@ namespace Pixie
             _backGroundColor = ColorTranslator.FromHtml(_settings.BackgroundColor);
             foreach (var i in settings.ColorMapping)
             {
+                if (Colors.ContainsKey(i.Value))
+                    throw new ConfigurationErrorsException($"Config file ColorMapping has several keys {i.Value}");
+                
                 Colors.Add(i.Value, ColorTranslator.FromHtml(i.Key));
             }
         }
